@@ -1,6 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
+import  User from '../../models/user'
+import getLocalUsers from '../../services/users.service'
 
 @Component({
   selector: 'app-home',
@@ -13,20 +15,21 @@ import { Component, OnInit } from '@angular/core';
 
 export class HomeComponent implements OnInit {
 
-users: any
-title: string = "Home"
+  users: User[] = []
+  title: string = "Home"
 
-constructor(private http:HttpClient) { }
+  constructor(private http:HttpClient) { }
 
-ngOnInit(): void {
-  this.getUsers()
-}
+  ngOnInit(): void {
+    //this.getUsers()
+    this.users = getLocalUsers;
+  }
 
-getUsers() {
-  this.http.get('http://localhost:5290/User').subscribe({
-    next: response => this.users = response,
-    error: error => console.log(error)
-  })
-}
+  getUsers() {
+    this.http.get<User[]>('http://localhost:5290/User').subscribe({
+      next: response => this.users = response,
+      error: error => console.log(error)
+    })
+  }
 
 }
