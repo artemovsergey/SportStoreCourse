@@ -9,4 +9,5 @@ namespace SportStore.API.Interfaces;
 public interface IUserRepository
 {
    User CreateUser(User user);
+   List<User> GetUsers();
 }

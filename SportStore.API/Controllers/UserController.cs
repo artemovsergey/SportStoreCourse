@@ -23,8 +23,15 @@ public class UserController : ControllerBase
     [HttpPost]
     public ActionResult CreateUser(User user){
         
+        user.Id = Guid.NewGuid();
+        
         _db.CreateUser(user);
         return Created("http://192.168.4.90/api/users/id", user);
+    }
+    
+    [HttpGet]
+    public ActionResult GetUser(){
+        return Ok(_db.GetUsers());
     }
     
 }

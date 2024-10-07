@@ -7,7 +7,7 @@ using SportStore.API.Interfaces;
 
 namespace SportStore.API.Repositories;
 
-public class UserRepository : IUserRepository
+public clasUserRepository : IUserRepository
 {
     public IList<User> Users { get; set; } = new List<User>();  
 
@@ -15,5 +15,10 @@ public class UserRepository : IUserRepository
     {
        Users.Add(user);
        return user;
+    }
+
+    public List<User> GetUsers()
+    {
+        return (List<User>)Users;
     }
 }
