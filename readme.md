@@ -53,7 +53,7 @@ public class User{
 - Microsoft.EntityFrameworkCore.Tools
 - Microsoft.EntityFrameworkCore.Design
 
-В результате добавления пакетов project файл SportStore.APi будет выглядеть следующим образом:
+В результате добавления пакетов project файл ```SportStore.API``` будет выглядеть следующим образом:
 
 ```xml
 <Project Sdk="Microsoft.NET.Sdk.Web">
