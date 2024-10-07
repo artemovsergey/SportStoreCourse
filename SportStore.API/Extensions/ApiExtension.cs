@@ -21,7 +21,7 @@ namespace SportStore.API.Extensions
                 }
                 catch(Exception ex)
                 {
-
+                    throw new Exception($"Sql Exception:{ex.InnerException!.Message}");
                 }
             }
 

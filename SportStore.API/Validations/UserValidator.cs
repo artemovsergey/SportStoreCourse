@@ -19,8 +19,8 @@ public class MaxLengthAttribute : ValidationAttribute
         _maxLength = maxLength;
     }
 
-    public override bool IsValid(object value)
+    public override bool IsValid(object? value)
     {
-        return ((String)value).Length <= _maxLength;
+        return ((String)value!).Length <= _maxLength;
     }
 }
