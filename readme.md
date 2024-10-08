@@ -123,6 +123,12 @@ public class UserRepository : IUserRepository
 # Реализация CRUD в UserRepository
 Задание: реализуйте методы, которые будут составлять CRUD операции для User
 
+# Unit Test
+
+- запуск всех тестов ```dotnet test```
+- просмотр все доступных тестов ```dotnet test --list-tests```
+- запуск конкретного списка по фильтру ```dotnet test dotnet test --filter "FullyQualifiedName=xunit.UserRepositoryTests.FindUserById_ShouldThrowExceptionForNonExistentId" ```
+
 
 # DI
 
@@ -142,11 +148,6 @@ DataAnnotation и FluentValidation
 
 
 # Асинхронность. Работа с Task
-
-
-
-
-
 
 
 

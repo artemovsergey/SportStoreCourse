@@ -105,4 +105,14 @@ public class UserRepositoryTests
         Assert.Contains(testUser1, users);
         Assert.Contains(testUser2, users);
     }
+
+    [Fact]
+    public void FindUserById_ShouldThrowExceptionForNonExistentId()
+    {
+        // Arrange
+        var userRepository = new UserRepository();
+
+        // Act & Assert
+        Assert.Throws<Exception>(() => userRepository.FindUserById(Guid.NewGuid()));
+    }
 }

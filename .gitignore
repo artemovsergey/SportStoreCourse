@@ -1,6 +1,20 @@
+# Скрытые файлы
+#*.log
+#*.tmp
+#*.swp
+
+# Скрытые папки
+# /.idea/
+# /.vscode/
+# /node_modules/
+
+# Все скрытые файлы и папки
+# .*
+
 node_modules
-.angular
-.vscode
+*.angular
+/.vscode
+
 bin
 obj
 appsettings.json
