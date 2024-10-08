@@ -132,7 +132,7 @@ public class UserRepository : IUserRepository
 
 # DI
 
-
+123
 
 # Validation
 DataAnnotation и FluentValidation
