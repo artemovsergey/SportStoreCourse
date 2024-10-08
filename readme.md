@@ -125,30 +125,317 @@ public class UserRepository : IUserRepository
 
 # Unit Test
 
+Для реализации unit-тестирования функциональности методов репозитория создадим проект:
+
+```dotnet new xunit -o SportStore.Tests```
+
+Создайте класс ```UserRepositoryTests```
+
+```Csharp
+public class UserRepositoryTests
+{
+    private readonly UserRepository _userRepository;
+    public UserRepositoryTests()
+    {
+        _userRepository = new UserRepository();
+    }
+
+    [Fact]
+    public void CreateUser_ShouldReturnNewUserWithGeneratedId()
+    {
+        // Arrange
+        var newUser = new User { Name = "Test User" };
+        // Act
+        var createdUser = _userRepository.CreateUser(newUser);
+        // Assert
+        Assert.NotNull(createdUser);
+        Assert.NotEqual(Guid.Empty, createdUser.Id);
+        Assert.Equal(newUser.Name, createdUser.Name);
+    }
+
+    [Fact]
+    public void DeleteUser_ShouldReturnTrueAndRemoveUser()
+    {
+        // Arrange
+        var userRepository = new UserRepository();
+        var testUser = new User { Id = Guid.NewGuid(), Name = "Test User" };
+        userRepository.Users.Add(testUser);
+
+        // Act
+        bool result = userRepository.DeleteUser(testUser.Id);
+
+        // Assert
+        Assert.True(result);
+        Assert.Empty(userRepository.Users);
+    }
+
+    [Fact]
+    public void EditUser_ShouldUpdateExistingUser()
+    {
+        // Arrange
+        var userRepository = new UserRepository();
+        var originalUser = new User { Id = Guid.NewGuid(), Name = "Original User" };
+        userRepository.Users.Add(originalUser);
+
+        // Act
+        var editedUser = new User { Id = originalUser.Id, Name = "Edited User" };
+        var result = userRepository.EditUser(editedUser, originalUser.Id);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal("Edited User", result.Name);
+        Assert.Single(userRepository.Users);
+    }
+
+    [Fact]
+    public void FindUserById_ShouldReturnUserByValidId()
+    {
+        // Arrange
+        var userRepository = new UserRepository();
+        var testUser = new User { Id = Guid.NewGuid(), Name = "Test User" };
+        userRepository.Users.Add(testUser);
+
+        // Act
+        var foundUser = userRepository.FindUserById(testUser.Id);
+
+        // Assert
+        Assert.NotNull(foundUser);
+        Assert.Equal(testUser.Id, foundUser.Id);
+        Assert.Equal(testUser.Name, foundUser.Name);
+    }
+
+    [Fact]
+    public void FindUserById_ShouldThrowExceptionForInvalidId()
+    {
+        // Arrange
+        var userRepository = new UserRepository();
+
+        // Act & Assert
+        Assert.Throws<Exception>(() => userRepository.FindUserById(Guid.NewGuid()));
+    }
+
+    [Fact]
+    public void GetUsers_ShouldReturnAllUsers()
+    {
+        // Arrange
+        var userRepository = new UserRepository();
+        var testUser1 = new User { Id = Guid.NewGuid(), Name = "User 1" };
+        var testUser2 = new User { Id = Guid.NewGuid(), Name = "User 2" };
+        userRepository.Users.Add(testUser1);
+        userRepository.Users.Add(testUser2);
+
+        // Act
+        var users = userRepository.GetUsers();
+
+        // Assert
+        Assert.NotNull(users);
+        Assert.Equal(2, users.Count);
+        Assert.Contains(testUser1, users);
+        Assert.Contains(testUser2, users);
+    }
+
+    [Fact]
+    public void FindUserById_ShouldThrowExceptionForNonExistentId()
+    {
+        // Arrange
+        var userRepository = new UserRepository();
+
+        // Act & Assert
+        Assert.Throws<Exception>(() => userRepository.FindUserById(Guid.NewGuid()));
+    }
+}
+```
+
 - запуск всех тестов ```dotnet test```
 - просмотр все доступных тестов ```dotnet test --list-tests```
 - запуск конкретного списка по фильтру ```dotnet test dotnet test --filter "FullyQualifiedName=xunit.UserRepositoryTests.FindUserById_ShouldThrowExceptionForNonExistentId" ```
 
 
+# Создание UsersCotroller для управления пользователями
+
+```Csharp
+
+[ApiController]
+[Route("[controller]")]
+public class UserController : ControllerBase
+{
+    private readonly IUserRepository _repo;
+    public UserController(IUserRepository repo)
+    {
+       _repo = repo;
+    }
+
+    [HttpPost]
+    public ActionResult CreateUser(User user){
+
+        var validator = new FluentValidator();
+        var result = validator.Validate(user);
+        if(!result.IsValid){
+            throw new Exception($"{result.Errors.First().ErrorMessage}");
+        }
+
+        Ok(_repo.CreateUser(user))
+    }
+    
+    [HttpGet]
+    public ActionResult GetUser(){
+        return Ok(_repo.GetUsers());
+    }
+    
+
+    [HttpPut]
+    public ActionResult UpdateUser(User user){
+       return Ok(_repo.EditUser(user, user.Id));
+    }
+
+
+    [HttpGet("{id}")]
+    public ActionResult GetUserById(Guid id){
+       return Ok(_repo.FindUserById(id));
+    }
+
+
+    [HttpDelete]
+    public ActionResult DeleteUser(Guid id){
+        return Ok(_repo.DeleteUser(id));
+    }
+
+}
+```
+
+**Задание**: при запросе post на создание нового ресурса обычно принято отвечать кодом 201. Примените метод ```Created``` для возрата ответа типа ```ActionResult```
+
+
 # DI
 
-123
+Для контроллер UsersController запрашивает в своем конструкторе 
+
+```Csharp
+    private readonly IUserRepository _repo;
+    public UserController(IUserRepository repo)
+    {
+       _repo = repo;
+    }
+```
+
+реализацию интерфейса ```IUserRepository```, который ему должен предоставить DI (Dependency Injection) - контейнер внедрения зависимости встроенный во фреймворк ASP Core. Для этого надо зарегистрировать сервис в коллекции сервимов в проекте API.
+
+```Csharp
+builder.Services.AddSingleton<IUserRepository, UserRepository>();
+```
+
 
 # Validation
-DataAnnotation и FluentValidation
+
+## DataAnnotation
+
+При отравке пост запросов надо проверять модель данных на соответствие валидности. Для этого применяются инструменты: встроенное средства проверки ```DataAnnotation``` и пакет ```FluentValidation```.
+
+Атрибут для проверки минимального длины имени
+```Csharp
+  [MinLength(5,ErrorMessage = "Минимальное длина имени 5")]
+  public string Name {get ;set;} = string.Empty;
+```
+
+Для создания собственного атрибута валидации DataAnnotation создайте папку ```Validations``` и в ней создайте класс ```UserValidator```
+
+```Csharp
+public class MaxLengthAttribute : ValidationAttribute
+{
+    private readonly int _maxLength;
+
+    public MaxLengthAttribute(int maxLength) : base($"Name max {maxLength} ")
+    {
+        _maxLength = maxLength;
+    }
+
+    public override bool IsValid(object? value)
+    {
+        return ((String)value!).Length <= _maxLength;
+    }
+}
+```
+
+Таким образом модель будет выглядеть следующим образом:
+
+```Csharp
+public class User
+{
+    public Guid Id {get ;set;} = Guid.NewGuid();
+    
+    [MinLength(5,ErrorMessage = "Минимальное длина имени 5")]
+    [SportStore.API.Validations.MaxLength(10)]
+    public string Name {get ;set;} = string.Empty;
+}
+```
+
+## FluentValidation
+
+Установите пакет ```FluentValidation```
+
+Создайте в папке Validation новый класс.
+
+```Csharp
+    public class FluentValidator : AbstractValidator<User>
+    {
+        public FluentValidator()
+        {
+            RuleFor(u => u.Name).Must(StartsWithCapitalLetter).WithMessage("Имя пользователя должно начинаться с заглавной буквы");
+        }
+        
+        private bool StartsWithCapitalLetter(string username)
+        {
+            return char.IsUpper(username[0]);
+        }
+    }
+```
+
+Для применения валидатора к конечной точки
 
 
+```Csharp
+        var validator = new FluentValidator();
+        var result = validator.Validate(user);
+        if(!result.IsValid){
+            throw new Exception($"{result.Errors.First().ErrorMessage}");
+        }
+```
 
-
+**Задание**: проверьте метод контроллера создания пользователя, чтобы имя пользователя начиналось с заглавной буквы.
 
 
 # Postman(Swagger,request.http) для тестирования API
 
+- Способ 1
+Протестируйте работу API на примере управления пользователями с помощью встроенного средства Swagger по адресу http://localhost:5290/swagger
 
+- Cпособ 2. Postman
 
+- Способ 3. Запросы .http
 
+Создайте в корнейвой директории папку requests в которой создайте файл с расширением http. Например, getusers.http
+
+```http
+GET http://localhost:5290/User
+```
+
+postuser.http
+```http
+POST http://localhost:5290/User
+Content-Type: application/json
+
+{
+  "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "name": "Newuser123213131"
+}
+```
+
+Проверка запросов осуществляется с помощью VS Code.
+
+**Задание**: у пользователя должна быть роль. Создайте модель для роли пользователя, интерфейс, репозиторий, контроллер, валидации, напишите unit-тесты для репозитории.
+
+---
 # Асинхронность. Работа с Task
-
 
 
 ---
@@ -217,12 +504,6 @@ public class SportStoreContext : DbContext
 ```dotnet ef update database -s SportStore.APi -p SportStore.API```
 
 **Замечание**: -s - это стартовый проект, -p - это текущий проект. Либо, можно зайти в проект ```SportStore.API``` явно и не прописывать данные параметры.
-
-
-
-
-
-
 
 
 Результат:
