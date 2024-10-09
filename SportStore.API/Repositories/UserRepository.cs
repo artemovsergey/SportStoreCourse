@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using System.Linq;
 using System.Threading.Tasks;
+using SportStore.API.Data;
 using SportStore.API.Entities;
 using SportStore.API.Interfaces;
 
@@ -9,50 +11,47 @@ namespace SportStore.API.Repositories;
 
 public class UserRepository : IUserRepository
 {
-    public IList<User> Users { get; set; } = new List<User>();  
+    private readonly SportStoreContext _db;
+    public UserRepository(SportStoreContext db)
+    {
+        _db = db;
+    }
 
     public User CreateUser(User user)
     {
-       user.Id = Guid.NewGuid();
-       Users.Add(user);
-       return user;
+       try
+       {
+         _db.Add(user);
+         _db.SaveChanges();
+         return user;
+       }
+       catch(SqlTypeException ex)
+       {
+         throw new SqlTypeException($"Ошибка SQL: {ex.Message}");
+       }
+       catch (Exception ex)
+       {
+         throw new Exception($"Ошибка: {ex.Message}");
+       }
     }
 
     public bool DeleteUser(Guid id)
     {
-        var result = FindUserById(id);
-        Users.Remove(result);
-        return true;
+        throw new NotImplementedException();
     }
 
-
-    /// <summary>
-    /// Редактирование пользователя
-    /// </summary>
-    /// <param name="user"></param>
-    /// <param name="id"></param>
-    /// <returns></returns>
     public User EditUser(User user, Guid id)
     {
-       var result = FindUserById(id);
-       // update
-       result.Name = user.Name;
-       return result;
+        throw new NotImplementedException();
     }
 
     public User FindUserById(Guid id)
     {
-        var result = Users.Where(u => u.Id == id).FirstOrDefault();
-
-       if(result == null){
-         throw new Exception($"Нет пользователя с id = {id}");
-       }
-
-       return result;
+        throw new NotImplementedException();
     }
 
     public List<User> GetUsers()
     {
-       return (List<User>)Users;
+        throw new NotImplementedException();
     }
 }

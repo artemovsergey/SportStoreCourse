@@ -1,18 +1,16 @@
 # Sprint 1 Introduction
 ---
-
-## Проекта API. Тип архитектуры: All-In
+## Проект API. Тип архитектуры: All-In
 
 Реализовать базовую функциональность API
 
 ### Использование dotnet CLI
 
-- создайте папку SportStore и перейдите в нее.
+- создайте папку SportStore и перейдите в нее в командной строке.
 - посмотрите с помощью команды ```dotnet new list``` список доступных проектов и создайте проект ```webapi``` с именем ```SportStore.API```
 - добавьте файл решения, находясь в папке рабочей директории, командой ```dotnet new sln```
 - добавьте в решение проект API - ```dotnet sln add SportStore.API```
 - добавьте файл gitignore (на уровне рабочей директории) - ```dotnet new gitignore```
-
 - откройте начальную архитектуру проекта в Visual Code командой ```code .```
 
 В результате вид обозревателя должен получиться такой:
@@ -24,16 +22,15 @@
 ```dotnet run --project SportStore.API```.
 
  У вас по конечной точке http://localhost:5290/weatherforecast должен выводится результат в формате json.
-
- Примечание: номер порта может быть другим.
+ **Примечание**: номер порта может быть другим.
 
 ![](images/sprint1_2.png)
 
-- добавьте в решение файл readme.md
+- добавьте в решение файл ```readme.md```
 - настройка Visual Code(exlude obj and bin, prefix _)
 - настройка среды разработки (Visual Code, Visual Studio, Rider)
 - фиксация изменений в git в master
-- от мастер создать ветку ```git branch all-in``` и перейти в нее ```git checkout all-in```. Далее работа будет вестись в этой ветке.
+- от мастер создать ветку ```git switch -c all-in``` и перейти в нее ```git switch all-in```. Далее работа будет вестись в этой ветке.
 
 ## Разработка домена приложения. Модель пользователя
 
@@ -41,12 +38,11 @@
 
 ```Csharp
 public class User{
-
     public Guid Id {get; set;}
     public string Name {get ;set;}
-
 }
 ```
+
 **Замечание**: тип Guid будет пока использоваться для локальной разработки без использования базы данных
 
 
@@ -433,80 +429,3 @@ Content-Type: application/json
 Проверка запросов осуществляется с помощью VS Code.
 
 **Задание**: у пользователя должна быть роль. Создайте модель для роли пользователя, интерфейс, репозиторий, контроллер, валидации, напишите unit-тесты для репозитории.
-
----
-
-# Асинхронность. Работа с Task
-
-
----
-# Entity Framework Core
-
-Установить пакеты:
-
-- Microsoft.EntityFrameworkCore
-- Microsoft.EntityFrameworkCore.Tools
-- Microsoft.EntityFrameworkCore.Design
-
-При установке пакетов надо соблюдать версионность относительно версии .net. В данном приложении применяется ```net7.0```
-
-В результате добавления пакетов ```project``` файл ```SportStore.API``` будет выглядеть следующим образом:
-
-```xml
-<Project Sdk="Microsoft.NET.Sdk.Web">
-
-  <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.5" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.20" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.20">
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.20">
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
-  </ItemGroup>
-
-</Project>
-```
-
-Создайте папку ```Data``` и добавьте класс ```SportStoreContext```
-
-```Csharp
-public class SportStoreContext : DbContext
-{
-    public DbSet<User> Users { get; set; }
-    
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=SportStoreCourse;Username=;Password=");
-    }
-}
-```
-
-В параметрах подключения к базе данных поставьте свой UserName и Password
-
-# Миграции
-
-В рабочей директории создайте первую миграцию.
-
-```dotnet ef migtations add Initial -s SportStore.API -p SportStore.API```
-
-Далее, выполните эту миграцию. То есть EF создаст реальные таблицы в базе данных PostgreSQL.
-
-```dotnet ef update database -s SportStore.APi -p SportStore.API```
-
-**Замечание**: -s - это стартовый проект, -p - это текущий проект. Либо, можно зайти в проект ```SportStore.API``` явно и не прописывать данные параметры.
-
-
-Результат:
-- branch:spring1:Introduction
-- pullRequest
