@@ -1,0 +1,5 @@
+@host = http://localhost:5050
+
+GET http://localhost:5050/api/Users/1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidXNlcjEiLCJuYmYiOjE3MjcwNzU3OTMsImV4cCI6MTcyNzY4MDU5MywiaWF0IjoxNzI3MDc1NzkzfQ.j8G-RZqDewalQ7gL-3pxPdcxLMTIyjqI5U8VzSSFzLIWWT2YgnPzk74zaemItfT0bYVr8UBFaCz6sikEIMs2Hg
