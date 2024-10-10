@@ -4,8 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using ErrorOr;
 using MediatR;
-using SportStore.Application.Interfaces;
-using SportStore.Domain;
+using SportStore.API.Entities;
+using SportStore.API.Interfaces;
+
 
 namespace SportStore.Application.Users.Queries
 {
@@ -19,11 +20,9 @@ namespace SportStore.Application.Users.Queries
 
         public async Task<ErrorOr<User>> Handle(GetUserByNameQuery request, CancellationToken cancellationToken)
         {
-           var user = await _userRepository.GetUserByName(request.UserName);
+           //var user = await _userRepository.GetUserByName(request.UserName);
 
-           
-
-           return user;
+           return new User();
         }
     }
 }

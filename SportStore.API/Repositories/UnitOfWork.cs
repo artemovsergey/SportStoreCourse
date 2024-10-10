@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using SportStore.Application.Interfaces;
-using SportStore.Infrastructure.Data;
+using SportStore.API.Data;
+using SportStore.API.Interfaces;
 
 namespace SportStore.Infrastructure.Repositories
 {

@@ -4,8 +4,8 @@ using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using CsvHelper;
-using SportStore.Application.Interfaces;
-using SportStore.Domain;
+using SportStore.API.Entities;
+using SportStore.API.Interfaces;
 
 namespace SportStore.Infrastructure.Services
 {
@@ -21,5 +21,6 @@ namespace SportStore.Infrastructure.Services
 
             return memoryStream.ToArray();
         }
+
     }
 }

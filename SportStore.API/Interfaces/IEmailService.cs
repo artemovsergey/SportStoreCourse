@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using SportStore.Application.Models;
 
-namespace SportStore.Application.Interfaces
+namespace SportStore.API.Interfaces
 {
     public interface IEmailService
     {

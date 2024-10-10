@@ -2,13 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using SportStore.API.Entities;
 using SportStore.Application.Features.Users.Commands.Queries;
-using SportStore.Domain;
 
-namespace SportStore.Application.Interfaces
+
+namespace SportStore.API.Interfaces;
+
+public interface ICsvExporter
 {
-    public interface ICsvExporter
-    {
-        byte[] ExportUsersToCsv(List<User> users);
-    }
+    byte[] ExportUsersToCsv(List<User> users);
 }

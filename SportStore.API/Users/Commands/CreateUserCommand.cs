@@ -5,8 +5,7 @@ using System.Threading.Tasks;
 using ErrorOr;
 using FluentValidation;
 using MediatR;
-
-using SportStore.Domain;
+using SportStore.API.Entities;
 
 namespace SportStore.Application.Users.Commands;
 

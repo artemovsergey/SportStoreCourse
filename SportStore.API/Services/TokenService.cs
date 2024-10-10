@@ -2,13 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using SportStore.Application.Interfaces;
-using SportStore.Domain;
+using SportStore.API.Interfaces;
+
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Configuration;
 using System.Text;
 using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
+
 
 namespace SportStore.Application.Services
 {

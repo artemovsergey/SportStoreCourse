@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentValidation.Results;
 
-namespace SportStore.Application.Exceptions;
+namespace SportStore.API.Exceptions;
 
     public class ValidationException : Exception
     {

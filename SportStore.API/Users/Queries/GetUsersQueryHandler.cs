@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 using AutoMapper;
 using ErrorOr;
 using MediatR;
-using SportStore.Application.Dto;
-using SportStore.Application.Interfaces;
-using SportStore.Domain;
+using SportStore.API.Dto;
+using SportStore.API.Entities;
+using SportStore.API.Interfaces;
 
 namespace SportStore.Application.Users.Queries
 {
@@ -23,10 +23,10 @@ namespace SportStore.Application.Users.Queries
 
         public async Task<ErrorOr<List<UserDto>>> Handle(GetUsersQuery request, CancellationToken cancellationToken)
         {
-            IEnumerable<User> users = await _userRepository.GetUsers();
-            var usersDto = _mapper.Map<List<UserDto>>(users);
+            //IEnumerable<User> users = await _userRepository.GetUsers();
+            //var usersDto = _mapper.Map<List<UserDto>>(users);
         
-            return users != null ? usersDto : Error.NotFound();
+            return new List<UserDto>();
         }
     }
 }

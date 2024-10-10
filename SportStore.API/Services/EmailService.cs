@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using SendGrid;
 using SendGrid.Helpers.Mail;
-using SportStore.Application.Interfaces;
+using SportStore.API.Interfaces;
 using SportStore.Application.Models;
 
 namespace SportStore.Infrastructure.Services

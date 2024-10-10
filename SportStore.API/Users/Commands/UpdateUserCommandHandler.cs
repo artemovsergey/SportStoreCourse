@@ -4,8 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using ErrorOr;
 using MediatR;
-using SportStore.Application.Interfaces;
-using SportStore.Domain;
+using SportStore.API.Entities;
+using SportStore.API.Interfaces;
 
 namespace SportStore.Application.Users.Commands
 {
@@ -22,9 +22,9 @@ namespace SportStore.Application.Users.Commands
 
         public async Task<ErrorOr<User>> Handle(UpdateUserCommand command, CancellationToken cancellationToken)
         {
-            var user = await _userRepository.UpdateUser(command.User!,command.userId);
+            //var user = await _userRepository.UpdateUser(command.User!,command.userId);
 
-            return user;
+            return new User();
         }
     }
 }

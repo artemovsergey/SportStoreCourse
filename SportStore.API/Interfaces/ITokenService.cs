@@ -2,9 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using SportStore.Domain;
 
-namespace SportStore.Application.Interfaces
+namespace SportStore.API.Interfaces
 {
     public interface ITokenService
     {

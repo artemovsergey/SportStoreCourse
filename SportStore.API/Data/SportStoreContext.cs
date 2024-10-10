@@ -16,10 +16,10 @@ public class SportStoreContext : DbContext
        optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=SportStoreCourse;Username=postgres;Password=root");
     }
 
-    public SportStoreContext(DbContextOptions options) : base(options)
-    {
+    // public SportStoreContext(DbContextOptions options) : base(options)
+    // {
         
-    }
+    // }
 
     public async Task CommitChangedAsync(CancellationToken cancellationToken = default)
     {

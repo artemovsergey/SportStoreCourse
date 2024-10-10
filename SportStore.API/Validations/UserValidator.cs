@@ -14,7 +14,7 @@ public class MaxLengthAttribute : ValidationAttribute
 {
     private readonly int _maxLength;
 
-    public MaxLengthAttribute(int maxLength) : base($"Name max {maxLength} ")
+    public MaxLengthAttribute(int maxLength) : base($"max {maxLength} ")
     {
         _maxLength = maxLength;
     }

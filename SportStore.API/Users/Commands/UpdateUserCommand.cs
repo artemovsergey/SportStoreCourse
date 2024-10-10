@@ -4,7 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using ErrorOr;
 using MediatR;
-using SportStore.Domain;
+using SportStore.API.Entities;
+
 
 namespace SportStore.Application.Users.Commands
 {

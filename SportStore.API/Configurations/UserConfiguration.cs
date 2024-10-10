@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using SportStore.Domain;
+using SportStore.API.Entities;
 
 namespace SportStore.Infrastructure.Configurations
 {

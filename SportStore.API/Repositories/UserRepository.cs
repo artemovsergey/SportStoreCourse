@@ -35,17 +35,17 @@ public class UserRepository : IUserRepository
        }
     }
 
-    public bool DeleteUser(Guid id)
+    public bool DeleteUser(int id)
     {
         throw new NotImplementedException();
     }
 
-    public User EditUser(User user, Guid id)
+    public User EditUser(User user, int id)
     {
         throw new NotImplementedException();
     }
 
-    public User FindUserById(Guid id)
+    public User FindUserById(int id)
     {
         throw new NotImplementedException();
     }

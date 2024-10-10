@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using System.Linq;
 using System.Net;
 using System.Text.Json;
@@ -45,6 +46,10 @@ public class ExceptionHandlerMiddleware
             // case NotFoundException:
             //     httpStatusCode = HttpStatusCode.NotFound;
             //     break;
+            case SqlTypeException sqlEx: 
+                httpStatusCode = HttpStatusCode.BadRequest;
+                result = sqlEx.Message;
+                break;
             case Exception:
                 httpStatusCode = HttpStatusCode.BadRequest;
                 break;

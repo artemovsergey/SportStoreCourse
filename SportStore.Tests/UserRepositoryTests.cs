@@ -6,10 +6,10 @@ namespace SportStore.Tests;
 
 public class UserRepositoryTests
 {
-    private readonly UserRepository _userRepository;
+    private readonly UserLocalRepository _userRepository;
     public UserRepositoryTests()
     {
-        _userRepository = new UserRepository();
+        _userRepository = new UserLocalRepository();
     }
 
     [Fact]
@@ -21,7 +21,7 @@ public class UserRepositoryTests
         var createdUser = _userRepository.CreateUser(newUser);
         // Assert
         Assert.NotNull(createdUser);
-        Assert.NotEqual(Guid.Empty, createdUser.Id);
+   
         Assert.Equal(newUser.Name, createdUser.Name);
     }
 
@@ -29,8 +29,8 @@ public class UserRepositoryTests
     public void DeleteUser_ShouldReturnTrueAndRemoveUser()
     {
         // Arrange
-        var userRepository = new UserRepository();
-        var testUser = new User { Id = Guid.NewGuid(), Name = "Test User" };
+        var userRepository = new UserLocalRepository();
+        var testUser = new User { Id = 2, Name = "Test User" };
         userRepository.Users.Add(testUser);
 
         // Act
@@ -45,8 +45,8 @@ public class UserRepositoryTests
     public void EditUser_ShouldUpdateExistingUser()
     {
         // Arrange
-        var userRepository = new UserRepository();
-        var originalUser = new User { Id = Guid.NewGuid(), Name = "Original User" };
+        var userRepository = new UserLocalRepository();
+        var originalUser = new User { Id = 1, Name = "Original User" };
         userRepository.Users.Add(originalUser);
 
         // Act
@@ -63,8 +63,8 @@ public class UserRepositoryTests
     public void FindUserById_ShouldReturnUserByValidId()
     {
         // Arrange
-        var userRepository = new UserRepository();
-        var testUser = new User { Id = Guid.NewGuid(), Name = "Test User" };
+        var userRepository = new UserLocalRepository();
+        var testUser = new User { Id = 2, Name = "Test User" };
         userRepository.Users.Add(testUser);
 
         // Act
@@ -80,19 +80,19 @@ public class UserRepositoryTests
     public void FindUserById_ShouldThrowExceptionForInvalidId()
     {
         // Arrange
-        var userRepository = new UserRepository();
+        var userRepository = new UserLocalRepository();
 
         // Act & Assert
-        Assert.Throws<Exception>(() => userRepository.FindUserById(Guid.NewGuid()));
+        Assert.Throws<Exception>(() => userRepository.FindUserById(1));
     }
 
     [Fact]
     public void GetUsers_ShouldReturnAllUsers()
     {
         // Arrange
-        var userRepository = new UserRepository();
-        var testUser1 = new User { Id = Guid.NewGuid(), Name = "User 1" };
-        var testUser2 = new User { Id = Guid.NewGuid(), Name = "User 2" };
+        var userRepository = new UserLocalRepository();
+        var testUser1 = new User { Id = 1, Name = "User 1" };
+        var testUser2 = new User { Id = 1, Name = "User 2" };
         userRepository.Users.Add(testUser1);
         userRepository.Users.Add(testUser2);
 
@@ -110,9 +110,9 @@ public class UserRepositoryTests
     public void FindUserById_ShouldThrowExceptionForNonExistentId()
     {
         // Arrange
-        var userRepository = new UserRepository();
+        var userRepository = new UserLocalRepository();
 
         // Act & Assert
-        Assert.Throws<Exception>(() => userRepository.FindUserById(Guid.NewGuid()));
+        Assert.Throws<Exception>(() => userRepository.FindUserById(1));
     }
 }

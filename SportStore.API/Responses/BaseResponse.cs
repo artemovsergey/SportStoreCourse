@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace SportStore.Application.Responses
+namespace SportStore.API.Responses
 {
     public class BaseResponse
     {

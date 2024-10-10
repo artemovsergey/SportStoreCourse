@@ -5,8 +5,9 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using ErrorOr;
 using MediatR;
-using SportStore.Application.Interfaces;
-using SportStore.Domain;
+using SportStore.API.Entities;
+using SportStore.API.Interfaces;
+
 
 namespace SportStore.Application.Users.Commands
 {
@@ -29,9 +30,9 @@ namespace SportStore.Application.Users.Commands
             //     throw new Exceptions.ValidationException(validatorResult);
             // }
 
-            var response = await _userRepository.CreateUserAsync(command.User!);
+            //var response = await _userRepository.CreateUserAsync(command.User!);
 
-            return response;
+            return new User();
         }
     }
 }
