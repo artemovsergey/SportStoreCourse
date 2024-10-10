@@ -3,11 +3,12 @@ import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import  User from '../../models/user'
 import getLocalUsers from '../../services/users.service'
+import {MatTableModule} from '@angular/material/table';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, MatTableModule],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })
@@ -17,6 +18,7 @@ export class HomeComponent implements OnInit {
 
   users: User[] = []
   title: string = "Home"
+  displayedColumns: string[] = ['id', 'name'];
 
   constructor(private http:HttpClient) { }
 

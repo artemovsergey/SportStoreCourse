@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using SportStore.API.Data;
+using SportStore.API.Dto;
 using SportStore.API.Entities;
 using SportStore.API.Interfaces;
 using SportStore.API.Validations;
@@ -22,16 +23,32 @@ public class UserController : ControllerBase
     }
 
     [HttpPost]
-    public ActionResult CreateUser(User user){
+    public ActionResult Login(UserRecordDto user){
+
+        //logic 
+        
+        return Ok();
+    }
+
+    [HttpPost]
+    public ActionResult CreateUser(UserRecordDto user){
+ 
+        // TODO: применить AutoMapper
+        var currentUser = new User(){
+            Name = user.Login
+        };
+
+        // TODO: валидация модели User
 
         var validator = new FluentValidator();
-        var result = validator.Validate(user);
+        var result = validator.Validate(currentUser);
         if(!result.IsValid){
             throw new Exception($"{result.Errors.First().ErrorMessage}");
         }
 
-        _repo.CreateUser(user);
-        return Created("http://192.168.4.90/api/users/id", user);
+        _repo.CreateUser(currentUser);
+
+        return Created("http://192.168.4.90/api/users/id", currentUser);
     }
     
     [HttpGet]

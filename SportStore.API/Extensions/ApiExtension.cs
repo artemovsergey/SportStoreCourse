@@ -24,6 +24,5 @@ namespace SportStore.API.Extensions
                     throw new Exception($"Sql Exception:{ex.InnerException!.Message}");
                 }
             }
-
     }
 }
