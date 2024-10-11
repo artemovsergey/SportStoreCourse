@@ -22,7 +22,7 @@ namespace SportStore.Application.Users.Queries
         {
            //var user = await _userRepository.GetUserByName(request.UserName);
 
-           return new User();
+           return await Task.FromResult(new User());
         }
     }
 }

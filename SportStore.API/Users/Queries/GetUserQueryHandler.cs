@@ -19,7 +19,7 @@ namespace SportStore.Application.Users.Queries
         public async Task<ErrorOr<User>> Handle(GetUserQuery request, CancellationToken cancellationToken)
         {
            //var user = await _userRepository.GetUser(request.UserId);
-           return new User();
+           return await Task.FromResult(new User());
         }
     }
 }

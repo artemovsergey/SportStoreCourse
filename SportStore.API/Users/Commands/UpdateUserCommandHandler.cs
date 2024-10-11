@@ -24,7 +24,7 @@ namespace SportStore.Application.Users.Commands
         {
             //var user = await _userRepository.UpdateUser(command.User!,command.userId);
 
-            return new User();
+            return await Task.FromResult(new User());
         }
     }
 }

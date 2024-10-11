@@ -15,6 +15,6 @@ namespace SportStore.Application.Features.Users.Commands.Queries
     public class UserExportViewModel{
         public string? UserExportFileName {get ;set;}
         public string? ContentType { get; set; }
-        public byte[] Data { get; set; }
+        public byte[]? Data { get; set; }
     }
 }

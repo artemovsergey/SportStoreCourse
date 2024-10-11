@@ -52,6 +52,6 @@ public class UserRepository : IUserRepository
 
     public List<User> GetUsers()
     {
-        throw new NotImplementedException();
+        return new List<User>();
     }
 }

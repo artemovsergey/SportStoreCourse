@@ -173,12 +173,68 @@ public class UserDto
 
 public record UserRecordDto(string Login, string Password);
 ```
-
 **Замечание**: Эквивалентом и краткой записью для класса со свойствами является ```record```.
 
-# Seed Data
+# Seed Data - генерация тестовых данных
 
-- SeedController + Bogus
+- установите библиотеку ```Bogus```
+
+- создайте новый контроллер ```SeedController``` в котором реализуйте метод для генерации пользователей
+
+```Csharp
+    [HttpGet("generate")]
+    public ActionResult SeedUsers(){
+
+        using var hmac = new HMACSHA512();
+
+        Faker<UserRecordDto> _faker = new Faker<UserRecordDto>("en")
+            .RuleFor(u => u.Login, f => GenerateLogin(f).Trim())
+            .RuleFor(u => u.Password, f => GeneratePassword(f).Trim().Replace(" ",""));
+
+
+        string GenerateLogin(Faker faker)
+        {
+            return faker.Random.Word() + faker.Random.Number(3,5);
+        }
+
+        string GeneratePassword(Faker faker)
+        {
+            return faker.Random.Word() + faker.Random.Number(3, 5);
+        }
+
+        var users = _faker.Generate(100).Where(u => u.Login.Length > 4 && u.Login.Length <= 10);
+        
+        List<User> userToDb = new List<User>();
+
+        try
+        {
+            
+            foreach (var user in users)
+            {
+                var u = new User()
+                {
+                    Login = user.Login,
+                    PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(user.Password)),
+                    PasswordSalt = hmac.Key,
+                };
+
+                userToDb.Add(u);
+
+            }
+
+            _db.Users.AddRange(userToDb);
+            _db.SaveChanges();
+        }
+        catch(Exception ex)
+        {
+            Console.WriteLine($"{ex.InnerException.Message}");
+        }
+
+        return Ok(userToDb);
+    }
+```
+
+
 
 - EF HasData
 В методе ```OnModelCreating``` контекста базы данных можно генерировать тестовые данные, а также применять пользовательские конфигурации.
@@ -251,15 +307,87 @@ app.Run();
         }
 ```
 
-
-
-
-
 # JWT. Реализация сервиса
+
+ - создайте интерфейс
+
+```Csharp
+    public interface ITokenService
+    {
+        string CreateToken(int UserId);
+    }
+```
+
+- установите пакет ```Microsoft.IdentityModel.Tokens```
+
+
+- реализуйте сервис для генерации jwt - токена
+
+```Csharp
+public class TokenService : ITokenService
+{
+
+    private readonly SymmetricSecurityKey _key;
+    public TokenService(IConfiguration config)
+    {
+      _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["TokenKey"]!));   
+    }
+
+    public string CreateToken(string UserLogin)
+    {
+       var claims =  new List<Claim>{
+         new Claim(JwtRegisteredClaimNames.Name, UserLogin)
+       };
+
+       var creds = new SigningCredentials(_key, SecurityAlgorithms.HmacSha512Signature);
+
+       var tokenDecriptor = new SecurityTokenDescriptor(){
+         Subject = new ClaimsIdentity(claims),
+         Expires = DateTime.UtcNow.AddDays(7),
+         SigningCredentials = creds
+       };
+
+       var tokenHandler = new JwtSecurityTokenHandler();
+       var token = tokenHandler.CreateToken(tokenDecriptor);
+       return tokenHandler.WriteToken(token);
+
+    }
+}
+```
+
+**Примечание**: значение ```config["TokenKey"]``` мы получаем из конфигурации ```appsettings.json```. Это открытый ключ шифрования. Поэтому добавьте пару ключ-значение в файл ```appsettings.Development.json```:
+
+appsettings.Development.json
+```json
+"TokenKey": "super key password for jwt token token token token token token token token "
+```
+
+- в модель ```User``` добавьте новое свойство ```public string Token {get; set;}```.
+- создайте миграцию и примените для обновления базы данных.
+- зарегистрируйте в контейнер DI контроллер ```UserController```.
+- внедрите объект ```ITokenService``` в конструктор ```UserController```.
+- в методе создания пользователя примените метод генерации токена из сервиса к полю ```Token``` у пользователя.
+
 
 # Middleware
 
-# Extension. Методы расширения
+- установите пакет ```Microsoft.AspNetCore.Authentication.JwtBearer```
+
+Program.cs
+```Csharp
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                            options.TokenValidationParameters = new TokenValidationParameters{
+                                ValidateIssuerSigningKey = true,
+                                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["TokenKey"]!)),
+                                ValidateIssuer = false,
+                                ValidateAudience = false,   
+                }
+                );
+```
+
+
+# Extensions. Методы расширения
 
 # Асинхронность. Работа с Task
 

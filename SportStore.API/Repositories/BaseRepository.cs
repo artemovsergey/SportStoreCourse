@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using SportStore.API.Data;
 using SportStore.API.Interfaces;
 
@@ -31,9 +32,10 @@ public class BaseRepository<T> : IAsyncRepository<T> where T : class
         throw new NotImplementedException();
     }
 
-    public virtual async Task<T> GetByIdAsync(int id){
-        return await _db.Set<T>().FindAsync(id);
-    }
+    // public virtual async Task<T> GetByIdAsync(int id)
+    // {
+    //    return await _db.Set<T>().FindAsync(id);
+    // }
 
     public Task<T> Update(T entity)
     {

@@ -6,8 +6,11 @@ using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using Bogus;
+using Bogus.Extensions.UnitedKingdom;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using SportStore.API.Data;
 using SportStore.API.Dto;
 using SportStore.API.Entities;
@@ -23,11 +26,17 @@ public class UserController : ControllerBase
     private readonly IUserRepository _repo;
     private readonly IMapper _mapper;
     private readonly SportStoreContext _db;
-    public UserController(IUserRepository repo, IMapper mapper, SportStoreContext db)
+    private readonly ITokenService _tokenService;
+
+    public UserController(IUserRepository repo,
+                          IMapper mapper,
+                          SportStoreContext db,
+                          ITokenService tokenService)
     { 
        _mapper = mapper;
        _repo = repo;
        _db = db;
+       _tokenService = tokenService;
     }
 
     [HttpGet("generate")]
@@ -75,17 +84,28 @@ public class UserController : ControllerBase
         }
         catch(Exception ex)
         {
-            Console.WriteLine($"{ex.InnerException.Message}");
+            Console.WriteLine($"{ex.InnerException!.Message}");
         }
 
         return Ok(userToDb);
     }
 
+    /// <summary>
+    /// Авторизация пользователя
+    /// </summary>
+    /// <param name="userDto"></param>
+    /// <returns></returns>
+    /// 
     [HttpPost("login")]
-    public ActionResult Login(UserRecordDto user){
+    public ActionResult Login(UserRecordDto userDto){
 
-        //logic 
-        return Ok();
+        // находим пользователя в базе данных
+        var user = _db.Users.FirstOrDefault(u => u.Login == userDto.Login);
+        
+        if(user == null) return NotFound($"Пользователя {userDto.Login} не существует");
+
+        // проверка пароля
+        return CheckPasswordHash(userDto, user);
     }
 
     [HttpPost]
@@ -106,6 +126,7 @@ public class UserController : ControllerBase
         var currentUser = _mapper.Map<User>(user);
         currentUser.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(user.Password));
         currentUser.PasswordSalt = hmac.Key;
+        currentUser.Token = _tokenService.CreateToken(user.Login);
 
         // TODO: валидация модели User
 
@@ -120,6 +141,7 @@ public class UserController : ControllerBase
         return Created("http://192.168.4.90/api/User/id", currentUser);
     }
     
+    [Authorize]
     [HttpGet]
     public ActionResult GetUser(){
         return Ok(_repo.GetUsers());
@@ -141,6 +163,25 @@ public class UserController : ControllerBase
     [HttpDelete]
     public ActionResult DeleteUser(int id){
         return Ok(_repo.DeleteUser(id));
+    }
+
+    /// <summary>
+    /// Проверка пароля
+    /// </summary>
+    /// <param name="userDto"> Модель представления </param>
+    /// <param name="user"> Пользователь из базы данных </param>
+    /// <returns></returns>
+    private ActionResult CheckPasswordHash(UserRecordDto userDto, User user)
+    {
+        using var hmac = new HMACSHA512(user.PasswordSalt);
+        var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(userDto.Password));
+
+        for(int i=0; i< computedHash.Length;i++){
+            if(computedHash[i] != user.PasswordHash[i]){
+                return Unauthorized($"Неправильный пароль");
+            }
+        }
+        return Ok(user);
     }
 
 }

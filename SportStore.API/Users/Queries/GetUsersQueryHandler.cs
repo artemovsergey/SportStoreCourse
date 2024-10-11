@@ -26,7 +26,7 @@ namespace SportStore.Application.Users.Queries
             //IEnumerable<User> users = await _userRepository.GetUsers();
             //var usersDto = _mapper.Map<List<UserDto>>(users);
         
-            return new List<UserDto>();
+            return  await Task.FromResult(new List<UserDto>());
         }
     }
 }

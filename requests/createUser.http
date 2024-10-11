@@ -1,10 +1,9 @@
 @host = http://localhost:5050
 
-POST http://localhost:5050/api/Users
+POST http://localhost:5290/api/User
 Content-Type:  application/json
 
 {
-    "name": "user2",
-    "age": 25,
-    "roleid": 1
+    "login": "User1",
+    "password": "123"
 }

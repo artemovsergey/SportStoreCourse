@@ -32,7 +32,7 @@ namespace SportStore.Application.Users.Commands
 
             //var response = await _userRepository.CreateUserAsync(command.User!);
 
-            return new User();
+            return await Task.FromResult(new User());
         }
     }
 }
