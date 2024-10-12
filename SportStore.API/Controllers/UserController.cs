@@ -1,16 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 using AutoMapper;
 using Bogus;
-using Bogus.Extensions.UnitedKingdom;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using SportStore.API.Data;
 using SportStore.API.Dto;
 using SportStore.API.Entities;
@@ -32,26 +25,27 @@ public class UserController : ControllerBase
                           IMapper mapper,
                           SportStoreContext db,
                           ITokenService tokenService)
-    { 
-       _mapper = mapper;
-       _repo = repo;
-       _db = db;
-       _tokenService = tokenService;
+    {
+        _mapper = mapper;
+        _repo = repo;
+        _db = db;
+        _tokenService = tokenService;
     }
 
     [HttpGet("generate")]
-    public ActionResult SeedUsers(){
+    public ActionResult SeedUsers()
+    {
 
         using var hmac = new HMACSHA512();
 
         Faker<UserRecordDto> _faker = new Faker<UserRecordDto>("en")
             .RuleFor(u => u.Login, f => GenerateLogin(f).Trim())
-            .RuleFor(u => u.Password, f => GeneratePassword(f).Trim().Replace(" ",""));
+            .RuleFor(u => u.Password, f => GeneratePassword(f).Trim().Replace(" ", ""));
 
 
         string GenerateLogin(Faker faker)
         {
-            return faker.Random.Word() + faker.Random.Number(3,5);
+            return faker.Random.Word() + faker.Random.Number(3, 5);
         }
 
         string GeneratePassword(Faker faker)
@@ -60,12 +54,12 @@ public class UserController : ControllerBase
         }
 
         var users = _faker.Generate(100).Where(u => u.Login.Length > 4 && u.Login.Length <= 10);
-        
+
         List<User> userToDb = new List<User>();
 
         try
         {
-            
+
             foreach (var user in users)
             {
                 var u = new User()
@@ -73,6 +67,7 @@ public class UserController : ControllerBase
                     Login = user.Login,
                     PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(user.Password)),
                     PasswordSalt = hmac.Key,
+                    Token = _tokenService.CreateToken(user.Login)
                 };
 
                 userToDb.Add(u);
@@ -82,7 +77,7 @@ public class UserController : ControllerBase
             _db.Users.AddRange(userToDb);
             _db.SaveChanges();
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             Console.WriteLine($"{ex.InnerException!.Message}");
         }
@@ -97,20 +92,22 @@ public class UserController : ControllerBase
     /// <returns></returns>
     /// 
     [HttpPost("login")]
-    public ActionResult Login(UserRecordDto userDto){
+    public ActionResult Login(UserRecordDto userDto)
+    {
 
         // находим пользователя в базе данных
         var user = _db.Users.FirstOrDefault(u => u.Login == userDto.Login);
-        
-        if(user == null) return NotFound($"Пользователя {userDto.Login} не существует");
+
+        if (user == null) return NotFound($"Пользователя {userDto.Login} не существует");
 
         // проверка пароля
         return CheckPasswordHash(userDto, user);
     }
 
     [HttpPost]
-    public ActionResult CreateUser(UserRecordDto user){
- 
+    public ActionResult CreateUser(UserRecordDto user)
+    {
+
         using var hmac = new HMACSHA512();
 
         // Ручной маппинг
@@ -119,7 +116,6 @@ public class UserController : ControllerBase
         //     Login = user.Login,
         //     PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(user.Password)),
         //     PasswordSalt = hmac.Key,
-        //     //Token = _tokenSerivice.CreateToken(user.Login)
         // };
 
         // AutoMapper
@@ -132,7 +128,8 @@ public class UserController : ControllerBase
 
         var validator = new FluentValidator();
         var result = validator.Validate(currentUser);
-        if(!result.IsValid){
+        if (!result.IsValid)
+        {
             throw new Exception($"{result.Errors.First().ErrorMessage}");
         }
 
@@ -140,28 +137,32 @@ public class UserController : ControllerBase
 
         return Created("http://192.168.4.90/api/User/id", currentUser);
     }
-    
+
     [Authorize]
     [HttpGet]
-    public ActionResult GetUser(){
+    public ActionResult GetUser()
+    {
         return Ok(_repo.GetUsers());
     }
-    
+
 
     [HttpPut]
-    public ActionResult UpdateUser(User user){
-       return Ok(_repo.EditUser(user, user.Id));
+    public ActionResult UpdateUser(User user)
+    {
+        return Ok(_repo.EditUser(user, user.Id));
     }
 
 
     [HttpGet("{id}")]
-    public ActionResult GetUserById(int id){
-       return Ok(_repo.FindUserById(id));
+    public ActionResult GetUserById(int id)
+    {
+        return Ok(_repo.FindUserById(id));
     }
 
 
     [HttpDelete]
-    public ActionResult DeleteUser(int id){
+    public ActionResult DeleteUser(int id)
+    {
         return Ok(_repo.DeleteUser(id));
     }
 
@@ -176,8 +177,10 @@ public class UserController : ControllerBase
         using var hmac = new HMACSHA512(user.PasswordSalt);
         var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(userDto.Password));
 
-        for(int i=0; i< computedHash.Length;i++){
-            if(computedHash[i] != user.PasswordHash[i]){
+        for (int i = 0; i < computedHash.Length; i++)
+        {
+            if (computedHash[i] != user.PasswordHash[i])
+            {
                 return Unauthorized($"Неправильный пароль");
             }
         }
