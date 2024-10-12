@@ -138,7 +138,7 @@ public class UserController : ControllerBase
         return Created("http://192.168.4.90/api/User/id", currentUser);
     }
 
-    [Authorize]
+    //[Authorize]
     [HttpGet]
     public ActionResult GetUser()
     {

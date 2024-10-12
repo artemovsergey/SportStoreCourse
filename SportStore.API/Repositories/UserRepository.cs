@@ -52,6 +52,6 @@ public class UserRepository : IUserRepository
 
     public List<User> GetUsers()
     {
-        return new List<User>();
+        return _db.Users.ToList();
     }
 }
