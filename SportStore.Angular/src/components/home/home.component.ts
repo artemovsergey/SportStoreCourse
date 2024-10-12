@@ -18,17 +18,17 @@ export class HomeComponent implements OnInit {
 
   users: User[] = []
   title: string = "Home"
-  displayedColumns: string[] = ['id', 'name'];
+  displayedColumns: string[] = ['id', 'login'];
 
   constructor(private http:HttpClient) { }
 
   ngOnInit(): void {
-    //this.getUsers()
-    this.users = getLocalUsers;
+    this.getUsers()
+    //this.users = getLocalUsers;
   }
 
   getUsers() {
-    this.http.get<User[]>('http://localhost:5290/User').subscribe({
+    this.http.get<User[]>('http://localhost:5290/api/User').subscribe({
       next: response => this.users = response,
       error: error => console.log(error)
     })
