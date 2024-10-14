@@ -1,35 +1,31 @@
-@use '@angular/material' as mat;
-//@include mat.core();
+// @use '@angular/material' as mat;
 
+// @include mat.core();
 
-$theme: mat.define-theme((
-  color: (
-    theme-type: light,
-    primary: mat.$yellow-palette,
-  ),
-  typography: (
-    brand-family: 'Comic Sans',
-    bold-weight: 100
-  ),
-  density: (
-    scale: -1
-  )
-));
+// $theme: mat.define-theme((
+//   color: (
+//     theme-type: light,
+//     primary: mat.$blue-palette
+//   ),
+//   typography: (
+//     brand-family: 'Comic Sans',
+//     bold-weight: 100
+//   ),
+//   density: (
+//     scale: -3
+//   )
+// ));
 
-:root{
-    @include mat.all-component-themes($theme);
-}
-s
+// :root{
+//     @include mat.all-component-themes($theme);
+// }
 
 html {
-  
-
      height: 100%;
-    
     }
 
 body { 
-    margin: 10;
+    margin: 0;
     font-family: Roboto,"Helvetica Neue", sans-serif;
 }
 

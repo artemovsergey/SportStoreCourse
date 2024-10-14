@@ -32,7 +32,7 @@
               }
             ],
             "styles": [
-              
+              "@angular/material/prebuilt-themes/indigo-pink.css",
               "src/styles.scss"
             ],
             "scripts": []
@@ -65,8 +65,8 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           
           "options": {
-            "sslCert": "./../certificate/crt/localhost.crt",
-            "sslKey": "./../certificate/crt/localhost.key",
+            "sslCert": "./../certificate/localhost.crt",
+            "sslKey": "./../certificate/localhost.key",
             "ssl": true
           },
 
