@@ -22,7 +22,7 @@ export class UsersComponent implements OnInit  {
   }
 
   getUsers(){
-    return this.http.get("http://localhost:5050/api/users").subscribe(
+    return this.http.get("http://localhost:5290/api/user").subscribe(
       response => {this.users = response; console.log(response)},
       error => { console.log(error)}
     )

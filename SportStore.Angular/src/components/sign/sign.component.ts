@@ -8,7 +8,6 @@ import { MatInputModule } from '@angular/material/input';
 import {MatSelectModule} from '@angular/material/select';
 import { AuthService } from '../../services/authservice.service';
 
-
 @Component({
   selector: 'app-sign',
   standalone: true,
@@ -16,6 +15,7 @@ import { AuthService } from '../../services/authservice.service';
   templateUrl: './sign.component.html',
   styleUrl: './sign.component.scss'
 })
+
 export class SignComponent {
 
 //parametr

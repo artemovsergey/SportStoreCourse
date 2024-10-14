@@ -13,7 +13,7 @@ import {TextFieldModule} from '@angular/cdk/text-field';
 import {MatInputModule} from '@angular/material/input';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {AuthService } from '../../services/authservice.service';
-import { User } from '../../models/user';
+import User  from '../../models/user';
 
 @Component({
   selector: 'app-header',
