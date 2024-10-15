@@ -65,8 +65,8 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           
           "options": {
-            "sslCert": "./../certificate/localhost.crt",
-            "sslKey": "./../certificate/localhost.key",
+            "sslCert": "./../certificate/crt/localhost.crt",
+            "sslKey": "./../certificate/crt/localhost.key",
             "ssl": true
           },
 

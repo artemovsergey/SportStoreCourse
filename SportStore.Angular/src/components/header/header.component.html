@@ -1,14 +1,21 @@
 <mat-toolbar color="primary">
 
   <button mat-icon-button [routerLink]="['/']">
-  <mat-icon>
-    home
-  </mat-icon>
+    <mat-icon>
+      home
+    </mat-icon>
   </button>
+
+  <button *ngIf="auth.currentUser$ | async" type="button" mat-icon-button (click)="logout()">
+    <mat-icon>
+      logout
+    </mat-icon>
+  </button>
+
   <a *ngIf="auth.currentUser$ | async"  mat-flat-button color="primary" [routerLink]="['/users']">
     Пользователи
   </a>
-
+  
   <form *ngIf="(auth.currentUser$ | async) === null" (ngSubmit) ="login()" autocomplete="off">
 
     <mat-form-field>
@@ -30,10 +37,7 @@
 
   </form>
 
-  <button *ngIf="auth.currentUser$ | async" type="button" mat-icon-button (click)="logout()">
-    <mat-icon>
-      logout
-    </mat-icon>
-  </button>
+
+
 
  </mat-toolbar>

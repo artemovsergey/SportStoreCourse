@@ -49,7 +49,6 @@ export class HeaderComponent implements OnInit {
   // }
 
 
-
   login(){
     return this.auth.login(this.model)
     .subscribe(r => {console.log(r);} ,
