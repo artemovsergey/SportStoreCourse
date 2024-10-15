@@ -1,5 +1,8 @@
 # Sprint 2 Introduction in Angluar
 
+ установка инструмента командной строки Angular
+```npm install -g @angular/cli@latest```
+
 # Создание проекта Angular
 
 ```ng new SportStore.Angular```
@@ -173,6 +176,7 @@ export class HomeComponent implements OnInit {
 В файле шаблона компонента ```home``` надо отобразить коллекцию ```users```. Для этого применяются директивы ```*ngFor```, для подключения которой надо импортировать функциональность модуля ```CommonModule``` в компонент ```home```.
 
 home.component.html
+
 ```html
 <h1> {{title}}</h1>
 
@@ -228,24 +232,7 @@ home.component.html
 
 # Настройка https сертификата для localhost (опция)
 
-В этой статье описывается подробно процесс создания самоподписанного сертфиката для localhost.
-
-https://dzen.ru/a/ZQ4nAsQZ6GkuFw7_
-
-После создания файлов сертификатов и установки собственного центра сертификации на свой компьютер можно настроить приложение Angular на эти сертификаты. Перейдите в ```angular.json``` в раздел ```serve``` и пропишите пути до сертификата и ключа. 
-
-Это нужно для того, чтобы среда разработки была идентичной среде production, когда приложение будет развернуто в интернете.
-
-angular.json
-```json
-          "options": {
-            "sslCert": "./../../certificate/localhost.crt",
-            "sslKey": "./../../certificate/localhost.key",
-            "ssl": true
-          },
-```
-
-# Создание центра сертификации
+## Создание центра сертификации
 
 - создайте файл ```openssl.conf```
 
@@ -265,7 +252,7 @@ emailAddress = test@git.scc
 ```
  openssl req -x509 -newkey rsa:4096 -days 365 -nodes -keyout root_ca.key -out root_ca.crt -config openssl.conf
 ```
-На выходе генерируются два файла: root_ca.key и root_ca.crt
+На выходе генерируются два файла: ```root_ca.key``` и ```root_ca.crt```
 
 
 # Генерация приватного ключа
@@ -334,5 +321,6 @@ angular.json
 
 - запустите приложение ```npm run start``` или ```ng serve```. Приложение должно работать на https
 
-**Примечание**: установка инструмента командной строки Angular
-```npm install -g @angular/cli@latest```
+**Примечание**:
+В этой статье описывается подробно процесс создания самоподписанного сертфиката для localhost.
+https://dzen.ru/a/ZQ4nAsQZ6GkuFw7_
