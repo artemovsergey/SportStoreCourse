@@ -2,30 +2,63 @@
 
 # Регистрация пользователя
 
-- в проекте Angular в папке ```src``` создайте папку ```components``` и создайте два компонента ```header``` и ```home```. Перейдите в ```components``` и выполните команду.
+- в проекте Angular в папке ```src``` создайте папку ```components``` и создайте компоненты ```header``` и ```users```. Перейдите в ```components``` и выполните команды. Так для ```header```:
 
 ```
 ng g c header --skip-tests
 ```
+- выполните для ```users```
 
-- также создайте ```home```
 
-# Рендер компонентов
+# Провайдер роутера
 
-- в шаблоне главного компонента ```app``` вставьте новые компоненты
+```ts
+import { provideRouter } from '@angular/router';
+import { routes } from './app.routes';
+```
 
-<app-header>
-<app-home/>
+- в коллекцию ```providers``` внесите новый элемент ```provideRouter(routes)```
 
+# Роутинг
+
+app.routes.ts
+```ts
+import { Routes } from '@angular/router';
+import { HeaderComponent } from '../components/header/header.component';
+import { HomeComponent } from '../components/home/home.component';
+import { UsersComponent } from '../components/users/users.component';
+
+export const routes: Routes = [
+    { path: 'header', component: HeaderComponent },
+    { path: 'users', component: UsersComponent },
+    { path: 'home', component: HomeComponent },
+    { path: '', component: HomeComponent },
+];
+```
+
+# Компонент router-outlen
+
+- в шаблоне ``app`` внесите изменения:
+
+```html
+<app-header/>
+<router-outlet/>
+```
 
 # Angular Material
-
-- установите пакет
 
 ```
 ng add @angular/material
 ```
 
+в angular.json в разделе ```styles``` подключите предустановленную тему:
+
+```json
+"styles": [
+        "@angular/material/prebuilt-themes/indigo-pink.css",
+        "src/styles.scss"
+    ],
+```
 
 # Настройка роутера 
 
