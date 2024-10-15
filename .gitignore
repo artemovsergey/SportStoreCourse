@@ -12,15 +12,10 @@
 # .*
 
 node_modules
-
-SportStore.Angular/.angular/
-
-**/.tsbuildinfo/
-
+.angular/cache/
 .vscode
-
 bin
 obj
 appsettings.json
-SportStore.Angular/.angular/cache/18.2.7/SportStore.Angular/.tsbuildinfo
-.angular
+SportStore.Angular/.angular/cache/
+
