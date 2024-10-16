@@ -1,6 +1,15 @@
 <h3>Пользователи</h3>
 
+<p *ngIf="(users$ | async) == null">Данные загружаются...</p>
+
 <ul *ngFor="let user of users$ | async">
   <li>{{user.id}}</li>
 </ul>
+
+<br>
+
+<ul *ngFor="let user of users">
+  <li>{{user.id}}</li>
+</ul>
+
 

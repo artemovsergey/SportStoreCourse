@@ -2,8 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import User from '../../models/user'
 import { UsersService } from '../../services/users.service';
-import { Observable } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
+import { Observable, timeInterval, timeout } from 'rxjs';
 
 @Component({
   selector: 'app-home',
@@ -12,19 +11,21 @@ import { HttpClient } from '@angular/common/http';
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })
+
 export class HomeComponent implements OnInit {
  
-  // users: User[] = []
+  users$: Observable<User[]> = new Observable
+  users:any = []
 
-  users$: Observable<User[]>
-
-  constructor(private userService:UsersService) {   
-    this.users$ = userService.getUsers()
-  }
+  constructor(private userService:UsersService) { }
 
   ngOnInit() {
-    // this.users$.subscribe(r => console.log(r))
+    this.users$ = this.userService.getUsers()
+    this.getUsers()
   }
 
+  getUsers(){
+    this.userService.getUsers().subscribe(response => this.users = response)
+  }
 
 }
