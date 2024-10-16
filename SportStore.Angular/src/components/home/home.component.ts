@@ -1,9 +1,9 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-
 import { CommonModule } from '@angular/common';
 import User from '../../models/user'
-import { UsersLocalService } from '../../services/userslocal.service';
+import { UsersService } from '../../services/users.service';
+import { Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-home',
@@ -13,17 +13,18 @@ import { UsersLocalService } from '../../services/userslocal.service';
   styleUrl: './home.component.scss'
 })
 export class HomeComponent implements OnInit {
+ 
+  // users: User[] = []
 
-  users: User[] = []
+  users$: Observable<User[]>
 
-  constructor(private http:HttpClient, public usersLocalService:UsersLocalService) {  
+  constructor(private userService:UsersService) {   
+    this.users$ = userService.getUsers()
   }
 
-  ngOnInit():void {
-    //this.users = this.usersLocalService.getLocalUsers();
-    this.getUsers();
+  ngOnInit() {
+    // this.users$.subscribe(r => console.log(r))
   }
-
 
 
 }
