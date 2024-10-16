@@ -5,12 +5,23 @@
 
 # Создание проекта Angular
 
+- установить инструмент командной строки angular
+
+```npm install -g @angular/cli@latest```
+
 ```ng new SportStore.Angular```
+
+- настройки: scss, ssr off
+
+- внести в gitignore папку ```node_modules``` и файл ```.angular```
+
 
 # Обзор архитектуры приложения Angular
 
 Проверка работоспособности
 ```ng serve```
+
+при запуске не отправлять данные 
 
 # Создание компонента
 
@@ -52,22 +63,14 @@ export class AppComponent {
 
 app.config.ts
 ```ts
-import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
-import { provideRouter } from '@angular/router';
-import { routes } from './app.routes';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
-import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 
 export const appConfig: ApplicationConfig = {
   providers: [
 
-              provideZoneChangeDetection({ eventCoalescing: true }),
-
-              provideRouter(routes),
-
-              provideHttpClient(
-                withInterceptorsFromDi()
-              ), provideAnimationsAsync(),
+            ...
+            provideHttpClient(withInterceptorsFromDi())
+            ...
 
             ]
 };
@@ -84,19 +87,31 @@ export default interface IUser {
 }
 ```
 
-- в папке ```src``` создайте папку ```services``` в которой создайте файла ```users.service.ts```. В этом файле определяется функция генерации локальных данны.
+- в папке ```src``` создайте папку ```services``` и выполните команду:
+
+```ng g s userslocal --skip-tests```
+
+В результате сгенерируется файл сервиса.
 
 ```ts
-import User from "../models/user";
+import { Injectable } from '@angular/core';
+import User from '../models/user'
 
-function getLocalUsers(): User[] {
-    var users = [{"id":"1","name":"user1"},
-                 {"id":"2","name":"user2"},
-                 {"id":"3","name":"user2"}]
+@Injectable({
+  providedIn: 'root'
+})
+export class UsersLocalService {
+
+  getLocalUsers(): User[] {
+    var users = [{ "id": "1", "name": "user1" },
+                 { "id": "2", "name": "user2" },
+                 { "id": "3", "name": "user3" }]
     return users;
+
+  }
+
 }
 
-export default getLocalUsers()
 ```
 
 Сделайте запрос к локальной коллекции пользователей в компоненте ```home```;
@@ -107,7 +122,7 @@ import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import  User from '../../models/user'
-import getLocalUsers from '../../services/users.service'
+import { UsersLocalService } from '../../services/userslocal.service';
 
 @Component({
   selector: 'app-home',
@@ -123,14 +138,38 @@ export class HomeComponent implements OnInit {
   users: User[] = []
   title: string = "Home"
 
-  constructor(private http:HttpClient) { }
+  constructor(private http:HttpClient, private usersLocalService:UsersLocalService) { }
 
   ngOnInit(): void {
-    this.users = getLocalUsers;
+    this.users = this.usersLocalService.getLocalUsers();
   }
 
 }
 ```
+
+# Управляющие конструкции в шаблоне компонента
+
+- в шаблоне компонента ```home``` поместите следующий код:
+
+```html
+<h3> Пользователи </h3>
+
+<ol *ngFor="let user of users">
+    <li> {{user.name}}</li>
+</ol>
+```
+
+или вы можете в шаблоне напрямую обращаться к сервису, если в конструкторе сделаете его ```public```.
+
+```html
+<ul *ngFor="let user of usersLocalService.getLocalUsers()">
+    <li> {{user.name}}</li>
+</ul>
+```
+
+```*ngFor``` - это директива, которая является простым циклом for. Для включения этой функциональности надо импортировать в компонент ```home``` модуль ```CommonModule```.
+
+# Получение данных API
 
 - теперь измените компонент ```home``` для получение данных о пользователях через API. 
 
@@ -159,8 +198,8 @@ export class HomeComponent implements OnInit {
   constructor(private http:HttpClient) { }
 
   ngOnInit(): void {
-    this.getUsers()
-    //this.users = getLocalUsers;
+    //this.users = this.usersLocalService.getLocalUsers();
+    this.getUsers();
   }
 
   getUsers() {
@@ -173,21 +212,9 @@ export class HomeComponent implements OnInit {
 }
 ```
 
-В файле шаблона компонента ```home``` надо отобразить коллекцию ```users```. Для этого применяются директивы ```*ngFor```, для подключения которой надо импортировать функциональность модуля ```CommonModule``` в компонент ```home```.
-
-home.component.html
-
-```html
-<h1> {{title}}</h1>
-
-<ul *ngFor="let user of users">
-  <li>{{user.name}}</li>
-</ul>
-```
-
 # Cors. Подключение и конфигурация
 
-По умолчанию политика браузера такова, что он не разрешает совершать запросы к ресурсу, который находится в другом домене, если принимающая сторона явно не разрешает это. То есть наше приложение Angular не сможет получить ответ от API, пока API не разрешит это.  Это политика CORS (Cross-Origin Resource Sharing).
+По умолчанию политика браузера такова, что он не разрешает совершать запросы к ресурсу, который находится в другом домене, если принимающая сторона явно не разрешает это. То есть наше приложение Angular не сможет получить ответ от API, пока API не разрешит это.  Эта политика назыаветяс CORS (Cross-Origin Resource Sharing).
 
 Теперь вернитесь в проект API и разрешите обращение к нему от всех источников и заголовков.
 
@@ -197,6 +224,8 @@ builder.Services.AddCors();
 ...
 app.UseCors(o => o.AllowAnyOrigin().AllowAnyHeader());
 ```
+
+**Задание**: создайте ```usersService``` получите данные из API в шаблон компонента ```home```.
 
 # Установка пакета Angular Material (Bootstrap, Tailwind, ngx-bootstrap)
 

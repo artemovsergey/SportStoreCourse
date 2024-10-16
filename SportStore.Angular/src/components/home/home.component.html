@@ -1,0 +1,5 @@
+<h3> Пользователи </h3>
+
+<ul *ngFor="let user of usersLocalService.getLocalUsers()">
+    <li> {{user.name}}</li>
+</ul>
