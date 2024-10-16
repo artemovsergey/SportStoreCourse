@@ -3,11 +3,13 @@ import { CommonModule } from '@angular/common';
 import User from '../../models/user'
 import { UsersService } from '../../services/users.service';
 import { Observable, timeInterval, timeout } from 'rxjs';
+import {MatTableDataSource, MatTableModule} from '@angular/material/table';
+import IUser from '../../models/user';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, MatTableModule],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })
@@ -15,7 +17,12 @@ import { Observable, timeInterval, timeout } from 'rxjs';
 export class HomeComponent implements OnInit {
  
   users$: Observable<User[]> = new Observable
-  users:any = []
+
+  users: User[] = []
+  
+  displayedColumns: string[] = ['id', 'name'];
+  
+  title:string = "Пользователи"
 
   constructor(private userService:UsersService) { }
 
@@ -24,8 +31,8 @@ export class HomeComponent implements OnInit {
     this.getUsers()
   }
 
-  getUsers(){
-    this.userService.getUsers().subscribe(response => this.users = response)
+  public getUsers(){
+    this.userService.getUsers().subscribe(r => this.users = r)
   }
 
 }
