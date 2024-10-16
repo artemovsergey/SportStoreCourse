@@ -224,6 +224,79 @@ app.UseCors(o => o.AllowAnyOrigin().AllowAnyHeader());
 
 **Задание**: создайте ```usersService``` получите данные из API в шаблон компонента ```home```.
 
+
+# Получение данных API
+
+- шаблон компонента ```home```
+```html
+<h3>Пользователи</h3>
+
+<p *ngIf="(users$ | async) == null">Данные загружаются...</p>
+
+<ul *ngFor="let user of users$ | async">
+  <li>{{user.id}}</li>
+</ul>
+```
+
+# UserService
+
+```ts
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import User from '../models/user'
+
+@Injectable({
+  providedIn: 'root'
+})
+export class UsersService {
+
+  constructor(private http:HttpClient) {}
+  
+  getUsers() {
+    const url = "http://localhost:5295/Users"
+    return this.http.get<User[]>(url)
+  }
+
+}
+```
+
+# Компонента home
+
+```ts
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import User from '../../models/user'
+import { UsersService } from '../../services/users.service';
+import { Observable, timeInterval, timeout } from 'rxjs';
+
+@Component({
+  selector: 'app-home',
+  standalone: true,
+  imports: [CommonModule],
+  templateUrl: './home.component.html',
+  styleUrl: './home.component.scss'
+})
+
+export class HomeComponent implements OnInit {
+ 
+  users$: Observable<User[]> = new Observable
+  users:any = []
+
+  constructor(private userService:UsersService) { }
+
+  ngOnInit() {
+    this.users$ = this.userService.getUsers()
+    this.getUsers()
+  }
+
+  getUsers(){
+    this.userService.getUsers().subscribe(response => this.users = response)
+  }
+
+}
+
+```
+
 # Установка пакета Angular Material (Bootstrap, Tailwind, ngx-bootstrap)
 
 ```ng add @angular/material```
