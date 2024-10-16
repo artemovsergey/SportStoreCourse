@@ -15,7 +15,6 @@
 
 - внести в gitignore папку ```node_modules``` и файл ```.angular```
 
-
 # Обзор архитектуры приложения Angular
 
 Проверка работоспособности
@@ -227,13 +226,42 @@ app.UseCors(o => o.AllowAnyOrigin().AllowAnyHeader());
 
 **Задание**: создайте ```usersService``` получите данные из API в шаблон компонента ```home```.
 
+
+# Применение pipe async 
+
+В компоненте:
+
+```ts
+  users$: Observable<User[]> = new Observable
+```
+
+В шаблоне:
+
+```html
+<p *ngIf="(users$ | async) == null">Данные загружаются...</p>
+
+<ul *ngFor="let user of users$ | async">
+  <li>{{user.id}}</li>
+</ul>
+```
+
+
 # Установка пакета Angular Material (Bootstrap, Tailwind, ngx-bootstrap)
 
 ```ng add @angular/material```
 
+При установке вас попросят выбрать тему, типографию и анимацию.
+
 # Вывод пользователей в виде таблицы 
 
-В шаблоне компонента применяются элементы из библиотеки пользовательского интерфейса Angular Material. Для отображения таблицы нужно импортировать модель ```MatTableModule```, а также объявить новое свойство в компоненте ```home```.
+В шаблоне компонента ```home``` применяются элементы из библиотеки пользовательского интерфейса ```Angular Material```. Для отображения таблицы нужно импортировать модель ```MatTableModule```,
+
+```ts
+import {MatTableModule} from '@angular/material/table';
+```
+
+
+ а также объявить новое свойство в компоненте ```home```, которое нужно для отображение таблицы.
 
 ```ts
 displayedColumns: string[] = ['id', 'name'];
@@ -276,10 +304,10 @@ CN = localhost
 emailAddress = test@git.scc
 ```
 
-- выполните команду только в ```Git Bash```
+- выполните команду только в ```Git Bash``` в директории, где находится файл ```openssl.conf```:
 
 ```
- openssl req -x509 -newkey rsa:4096 -days 365 -nodes -keyout root_ca.key -out root_ca.crt -config openssl.conf
+openssl req -x509 -newkey rsa:4096 -days 365 -nodes -keyout root_ca.key -out root_ca.crt -config openssl.conf
 ```
 На выходе генерируются два файла: ```root_ca.key``` и ```root_ca.crt```
 
@@ -297,7 +325,6 @@ openssl genrsa -out localhost.key 2048
 ```
 openssl req -new -key localhost.key -out localhost.csr -config openssl.conf
 ```
-
 На выходе генерируются ```localhost.csr```
 
 # Подпись запроса нашим центром сертификации 
@@ -328,17 +355,20 @@ openssl x509 -req \
 -CAcreateserial \
 -extfile localhost.ext
 
-
 На выходе генерируются ```localhost.crt```
-
 
 # Установить центр сертификации в Chrome
 
-- настройки -> безопасность -> сертификаты
+- Настройки -> Конфиденциальность и безопасность -> Безопасность -> Настроить серитфикаты
+
+- найдите доверенные центры сертификации и импортируйте файл ```localhost.crt```
+
+![](images/crt.png)
+
 
 # Настройка ssl для localhost в приложении Angular:
 
-- в файле ```angular.json``` вставьте секцию ```options``` в секцию ```serve``` c указанием пути к ssl сертификату
+- в файле ```angular.json``` вставьте в ```options``` в секцию ```serve``` c указанием пути к ssl сертификату и ключу.
 
 angular.json
 ```json
