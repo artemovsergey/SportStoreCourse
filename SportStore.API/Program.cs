@@ -1,40 +1,29 @@
-using System.Text;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
-using SportStore.API.Data;
-using SportStore.API.Extensions;
 using SportStore.API.Interfaces;
 using SportStore.API.Repositories;
-using SportStore.Application.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var configuration = builder.Configuration;
+// Add services to the container.
 
 builder.Services.AddControllers();
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<SportStoreContext>();
-builder.Services.AddScoped<ITokenService, TokenService>();
-
-builder.Services.AddCors();
-builder.Services.AddAutoMapper(typeof(Program).Assembly);
-
-builder.Services.AddJwtServices(builder.Configuration);
+builder.Services.AddSingleton<IUserRepository, UserLocalRepository>();
 
 var app = builder.Build();
 
-app.UseSwagger();
-app.UseSwaggerUI();
-//app.UseHttpsRedirection();
-app.UseCustomExceptionHandler();
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 
-app.UseCors(option => option.AllowAnyOrigin().AllowAnyHeader());
-app.UseAuthentication();
+app.UseHttpsRedirection();
+
 app.UseAuthorization();
 
 app.MapControllers();
+
 app.Run();

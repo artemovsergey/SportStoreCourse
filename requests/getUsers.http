@@ -1,5 +1,0 @@
-@host = http://localhost:5290
-
-GET {{host}}/api/User
-Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoidXNlciIsImV4cCI6MTc2MDIwNTg1NCwiaXNzIjoiSXNzdWVyIiwiYXVkIjoiQXVkaWVuY2UifQ.UhApN6NiM8p_WeY0nlhZgDvge_Q5m7mtZaq5yr1xz1E

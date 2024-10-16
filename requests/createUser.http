@@ -1,9 +1,0 @@
-@host = http://localhost:5050
-
-POST http://localhost:5290/api/User
-Content-Type:  application/json
-
-{
-    "login": "User1",
-    "password": "123"
-}
