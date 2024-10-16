@@ -6,6 +6,9 @@
 /bin/
 /obj/
 
+/node_modules/
+/SportStore.Angular/.angular/
+
 # User-specific files
 *.rsuser
 *.suo
