@@ -11,11 +11,11 @@ namespace SportStore.API.Validations;
     {
         public FluentValidator()
         {
-            RuleFor(u => u.Login).Must(StartsWithCapitalLetter).WithMessage("Логин пользователя должен начинаться с заглавной буквы");
+            RuleFor(u => u.Name).Must(StartsWithCapitalLetter).WithMessage("Имя пользователя должно начинаться с заглавной буквы");
         }
         
-        private bool StartsWithCapitalLetter(string login)
+        private bool StartsWithCapitalLetter(string username)
         {
-            return char.IsUpper(login[0]);
+            return char.IsUpper(username[0]);
         }
     }

@@ -1,34 +1,49 @@
 # Sprint 1 Introduction
 ---
+## Общие настройки
+- отключите расширения C# Dev Kit
+- включите material icons
+
 ## Проект API. Тип архитектуры: All-In
 
 ### Использование dotnet CLI
 
-- создайте папку ```SportStore``` и перейдите в нее в командной строке.
-- посмотрите с помощью команды ```dotnet new list``` список доступных проектов и создайте проект ```webapi``` с именем ```SportStore.API```
+
+- создайте папку SportStore и перейдите в нее в командной строке.
+- создайте проект ```webapi``` с именем ```SportStore.API``` командой:
+
+```dotnet new webapi -o SportStore.API```
+
 - добавьте файл решения, находясь в папке рабочей директории, командой ```dotnet new sln```
+
 - добавьте в решение проект API - ```dotnet sln add SportStore.API```
-- добавьте файл gitignore (на уровне рабочей директории) - ```dotnet new gitignore```
-- откройте начальную архитектуру проекта в Visual Code командой ```code .```
 
-В результате вид обозревателя должен получиться такой:
+- добавьте файл .gitignore (на уровне рабочей директории) - ```dotnet new gitignore```
 
-![](images/sprint1_1.png)
+**Замечание**: Настройка ```Visual Code```: settings => exclude: внесите шаблоны для ```bin``` и ```obj```
+
+- поместите в gitignore папки ```bin``` и ```obj```:
+
+```
+**/bin
+**/obj
+```
+
+- откройте начальную архитектуру проекта в ```Visual Code``` командой ```code .```
 
 Для проверки работоспособности приложения запустите API 
 
 ```dotnet run --project SportStore.API```.
 
- У вас по конечной точке http://localhost:5290/weatherforecast должен выводится результат в формате json.
- **Примечание**: номер порта может быть другим.
-
-![](images/sprint1_2.png)
+У вас по конечной точке http://localhost:5290/weatherforecast должен выводится результат в формате json.
+**Примечание**: номер порта может быть другим.
 
 - добавьте в решение файл ```readme.md```
-- настройка Visual Code(exlude obj and bin, prefix _)
-- настройка среды разработки (Visual Code, Visual Studio, Rider)
-- фиксация изменений в git в master
-- от мастер создать ветку ```git switch -c all-in``` и перейти в нее ```git switch all-in```. Далее работа будет вестись в этой ветке.
+
+- commit: "Создание начального проекта API"
+
+- от мастер создать ветку ```git switch -c all``` и перейти в нее ```git switch all```. Далее работа будет вестись в этой ветке.
+
 
 ## Разработка домена приложения. Модель пользователя
 
@@ -41,12 +56,13 @@ public class User{
 }
 ```
 
-**Замечание**: тип Guid будет пока использоваться для локальной разработки без использования базы данных
+**Замечание**: тип ```Guid``` будет пока использоваться для локальной разработки без использования базы данных.
+
 
 
 # Интерфейсы
 
-Создайте папку Interfaces и поместите следующий класс
+Создайте папку ```Interfaces``` и поместите следующий класс
 
 ```Csharp
 public interface IUserRepository
@@ -59,20 +75,20 @@ public interface IUserRepository
 }
 ```
 
-# Паттерн репозиторий
+## Реализация CRUD в UserRepository
 
-Создайте папку ```Repositories``` и поместите там следующий класс, который будет имлементировать (реализовывать) интерфейс IUserRepository.
+Создайте папку ```Repositories``` и поместите там следующий класс, который будет имплементировать (реализовывать) интерфейс ```IUserRepository```.
 
 ```Csharp
-public class UserRepository : IUserRepository
+public class UserLocalRepository : IUserRepository
 {
-    public IList<User> Users { get; set; } = new List<User>();  
+    public IList<User> Users { get; set; } = new List<User>();
 
     public User CreateUser(User user)
     {
-       user.Id = Guid.NewGuid();
-       Users.Add(user);
-       return user;
+        user.Id = Guid.NewGuid();
+        Users.Add(user);
+        return user;
     }
 
     public bool DeleteUser(Guid id)
@@ -82,40 +98,36 @@ public class UserRepository : IUserRepository
         return true;
     }
 
-    /// <summary>
-    /// Редактирование пользователя
-    /// </summary>
-    /// <param name="user"></param>
-    /// <param name="id"></param>
-    /// <returns></returns>
     public User EditUser(User user, Guid id)
     {
-       var result = FindUserById(id);
-       // update
-       result.Name = user.Name;
-       return result;
+        var result = FindUserById(id);
+        result.Name = user.Name;
+        return result;
     }
 
     public User FindUserById(Guid id)
     {
         var result = Users.Where(u => u.Id == id).FirstOrDefault();
 
-       if(result == null){
-         throw new Exception($"Нет пользователя с id = {id}");
-       }
+        if (result == null)
+        {
+            throw new Exception($"Нет пользователя с id = {id}");
+        }
 
-       return result;
+        return result;
     }
 
     public List<User> GetUsers()
     {
-       return (List<User>)Users;
+        return (List<User>)Users;
     }
 }
 ```
 
-# Реализация CRUD в UserRepository
-Задание: реализуйте методы, которые будут составлять CRUD операции для User
+**Примечание**: 
+- очистите папку ```Controllers``` от файла WeatherForecastController и файл модели. 
+- в модели данных User будет предупреждение на свойство ```Name```, которое можно убрать так:
+```public string Name { get; set; } = string.Empty;```, т.е указав значение по умолчанию.
 
 # Unit Test
 
@@ -123,15 +135,24 @@ public class UserRepository : IUserRepository
 
 ```dotnet new xunit -o SportStore.Tests```
 
-Создайте класс ```UserRepositoryTests```
+- добавьте проект с тестами в решение.
+- добавьте ссылку в проект с тестами на проект API
+
+```
+dotnet add .\SportStore.Tests\ reference .\SportStore.API
+```
+
+- удалите файл ```UnitTest1```
+
+- создайте класс ```UserLocalRepositoryTests``` в тестовом проекте
 
 ```Csharp
-public class UserRepositoryTests
+public class UserLocalRepositoryTests
 {
-    private readonly UserRepository _userRepository;
-    public UserRepositoryTests()
+    private readonly UserLocalRepository _userLocalRepository;
+    public UserLocalRepositoryTests()
     {
-        _userRepository = new UserRepository();
+        _userLocalRepository = new UserLocalRepository();
     }
 
     [Fact]
@@ -140,7 +161,7 @@ public class UserRepositoryTests
         // Arrange
         var newUser = new User { Name = "Test User" };
         // Act
-        var createdUser = _userRepository.CreateUser(newUser);
+        var createdUser = _userLocalRepository.CreateUser(newUser);
         // Assert
         Assert.NotNull(createdUser);
         Assert.NotEqual(Guid.Empty, createdUser.Id);
@@ -151,46 +172,46 @@ public class UserRepositoryTests
     public void DeleteUser_ShouldReturnTrueAndRemoveUser()
     {
         // Arrange
-        var userRepository = new UserRepository();
+        var UserLocalRepository = new UserLocalRepository();
         var testUser = new User { Id = Guid.NewGuid(), Name = "Test User" };
-        userRepository.Users.Add(testUser);
+        UserLocalRepository.Users.Add(testUser);
 
         // Act
-        bool result = userRepository.DeleteUser(testUser.Id);
+        bool result = UserLocalRepository.DeleteUser(testUser.Id);
 
         // Assert
         Assert.True(result);
-        Assert.Empty(userRepository.Users);
+        Assert.Empty(UserLocalRepository.Users);
     }
 
     [Fact]
     public void EditUser_ShouldUpdateExistingUser()
     {
         // Arrange
-        var userRepository = new UserRepository();
+        var UserLocalRepository = new UserLocalRepository();
         var originalUser = new User { Id = Guid.NewGuid(), Name = "Original User" };
-        userRepository.Users.Add(originalUser);
+        UserLocalRepository.Users.Add(originalUser);
 
         // Act
         var editedUser = new User { Id = originalUser.Id, Name = "Edited User" };
-        var result = userRepository.EditUser(editedUser, originalUser.Id);
+        var result = UserLocalRepository.EditUser(editedUser, originalUser.Id);
 
         // Assert
         Assert.NotNull(result);
         Assert.Equal("Edited User", result.Name);
-        Assert.Single(userRepository.Users);
+        Assert.Single(UserLocalRepository.Users);
     }
 
     [Fact]
     public void FindUserById_ShouldReturnUserByValidId()
     {
         // Arrange
-        var userRepository = new UserRepository();
+        var UserLocalRepository = new UserLocalRepository();
         var testUser = new User { Id = Guid.NewGuid(), Name = "Test User" };
-        userRepository.Users.Add(testUser);
+        UserLocalRepository.Users.Add(testUser);
 
         // Act
-        var foundUser = userRepository.FindUserById(testUser.Id);
+        var foundUser = UserLocalRepository.FindUserById(testUser.Id);
 
         // Assert
         Assert.NotNull(foundUser);
@@ -202,24 +223,24 @@ public class UserRepositoryTests
     public void FindUserById_ShouldThrowExceptionForInvalidId()
     {
         // Arrange
-        var userRepository = new UserRepository();
+        var UserLocalRepository = new UserLocalRepository();
 
         // Act & Assert
-        Assert.Throws<Exception>(() => userRepository.FindUserById(Guid.NewGuid()));
+        Assert.Throws<Exception>(() => UserLocalRepository.FindUserById(Guid.NewGuid()));
     }
 
     [Fact]
     public void GetUsers_ShouldReturnAllUsers()
     {
         // Arrange
-        var userRepository = new UserRepository();
+        var UserLocalRepository = new UserLocalRepository();
         var testUser1 = new User { Id = Guid.NewGuid(), Name = "User 1" };
         var testUser2 = new User { Id = Guid.NewGuid(), Name = "User 2" };
-        userRepository.Users.Add(testUser1);
-        userRepository.Users.Add(testUser2);
+        UserLocalRepository.Users.Add(testUser1);
+        UserLocalRepository.Users.Add(testUser2);
 
         // Act
-        var users = userRepository.GetUsers();
+        var users = UserLocalRepository.GetUsers();
 
         // Assert
         Assert.NotNull(users);
@@ -232,18 +253,17 @@ public class UserRepositoryTests
     public void FindUserById_ShouldThrowExceptionForNonExistentId()
     {
         // Arrange
-        var userRepository = new UserRepository();
+        var UserLocalRepository = new UserLocalRepository();
 
         // Act & Assert
-        Assert.Throws<Exception>(() => userRepository.FindUserById(Guid.NewGuid()));
+        Assert.Throws<Exception>(() => UserLocalRepository.FindUserById(Guid.NewGuid()));
     }
 }
 ```
 
 - запуск всех тестов ```dotnet test```
 - просмотр все доступных тестов ```dotnet test --list-tests```
-- запуск конкретного списка по фильтру ```dotnet test dotnet test --filter "FullyQualifiedName=xunit.UserRepositoryTests.FindUserById_ShouldThrowExceptionForNonExistentId" ```
-
+- запуск конкретного списка по фильтру ```dotnet test --filter "FullyQualifiedName=SportStore.Tests.UserLocalRepositoryTests.CreateUser_ShouldReturnNewUserWithGeneratedId" ```
 
 # Создание UsersCotroller для управления пользователями
 
@@ -251,10 +271,10 @@ public class UserRepositoryTests
 
 [ApiController]
 [Route("[controller]")]
-public class UserController : ControllerBase
+public class UsersController : ControllerBase
 {
     private readonly IUserRepository _repo;
-    public UserController(IUserRepository repo)
+    public UsersController(IUserRepository repo)
     {
        _repo = repo;
     }
@@ -262,13 +282,7 @@ public class UserController : ControllerBase
     [HttpPost]
     public ActionResult CreateUser(User user){
 
-        var validator = new FluentValidator();
-        var result = validator.Validate(user);
-        if(!result.IsValid){
-            throw new Exception($"{result.Errors.First().ErrorMessage}");
-        }
-
-        Ok(_repo.CreateUser(user))
+        return Ok(_repo.CreateUser(user));
     }
     
     [HttpGet]
@@ -297,16 +311,21 @@ public class UserController : ControllerBase
 }
 ```
 
-**Задание**: при запросе post на создание нового ресурса обычно принято отвечать кодом 201. Примените метод ```Created``` для возрата ответа типа ```ActionResult```
+- запустите API: ```dotnet run --project SportStore.API```.
 
+- но сейчас вы получите ошибку
+```
+Unable to resolve service for type 'SportStore.API.Interfaces.IUserRepository' while attempting to activate 'SportStore.API.Controllers.UsersController'.
+```
+Эта ошибка говорит о том, что контроллеру в контруктор требуется реализация интерфейса ```IUserRepository```, которую мы будем получать из контейнера внедрения зависимостей (DI).
 
 # DI
 
-Для контроллер UsersController запрашивает в своем конструкторе 
+Контроллер ```UsersController``` запрашивает в своем конструкторе 
 
 ```Csharp
     private readonly IUserRepository _repo;
-    public UserController(IUserRepository repo)
+    public UsersController(IUserRepository repo)
     {
        _repo = repo;
     }
@@ -315,8 +334,10 @@ public class UserController : ControllerBase
 реализацию интерфейса ```IUserRepository```, который ему должен предоставить DI (Dependency Injection) - контейнер внедрения зависимости встроенный во фреймворк ASP Core. Для этого надо зарегистрировать сервис в коллекции сервимов в проекте API.
 
 ```Csharp
-builder.Services.AddSingleton<IUserRepository, UserRepository>();
+builder.Services.AddSingleton<IUserRepository, UserLocalRepository>();
 ```
+
+- запустите проект и проверьте все конечные точки по пути ```http://localhost:[port]/swagger/index.html```
 
 
 # Validation
@@ -365,9 +386,13 @@ public class User
 
 ## FluentValidation
 
-Установите пакет ```FluentValidation```
+Установите пакет ```FluentValidation```:
 
-Создайте в папке Validation новый класс.
+```
+dotnet add .\SportStore.API\ package FluentValidation
+```
+
+Создайте в папке ```Validations``` новый класс.
 
 ```Csharp
     public class FluentValidator : AbstractValidator<User>
@@ -384,7 +409,7 @@ public class User
     }
 ```
 
-Для применения валидатора к конечной точки
+Для применения валидатора к конечной точки создания пользователя: 
 
 
 ```Csharp
@@ -407,7 +432,7 @@ public class User
 
 - Способ 3. Запросы .http
 
-Создайте в корнейвой директории папку requests в которой создайте файл с расширением http. Например, getusers.http
+Создайте в корнейвой директории папку ```requests``` в которой создайте файл с расширением http. Например, ```getusers.http```
 
 ```http
 GET http://localhost:5290/User
@@ -426,4 +451,6 @@ Content-Type: application/json
 
 Проверка запросов осуществляется с помощью VS Code.
 
-**Задание**: у пользователя должна быть роль. Создайте модель для роли пользователя, интерфейс, репозиторий, контроллер, валидации, напишите unit-тесты для репозитории.
+**Задание 1**: у пользователя должна быть роль. Создайте модель для роли пользователя, интерфейс, репозиторий, контроллер, валидации, напишите unit-тесты для репозитории.
+
+**Задание 2**: при запросе post на создание нового ресурса обычно принято отвечать кодом ```201```. Примените метод ```Created``` для возрата ответа типа ```ActionResult```
