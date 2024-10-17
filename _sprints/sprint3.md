@@ -18,7 +18,7 @@ public abstract class Base
 ```Csharp
 public class User : Base
 {
-    // свойства
+  // свойства
 }
 ```
 
@@ -28,11 +28,19 @@ public class User : Base
 
 
 
+
+
+
+
+
+
+
 # Entity Framework Core
 
-Для реализации взаимодействия с релеационной базой данных мы будем использовать ORM - ```Entity Framework Core```. Для этого надо установить пакеты:
+Для реализации взаимодействия с реляционной базой данных мы будем использовать ORM - ```Entity Framework Core```. Для этого надо установить пакеты отностильено версии .net проектов следующим способом:
 
-- пакет ```Microsoft.EntityFrameworkCore```
+- пакет Microsoft.EntityFrameworkCore
+```dotnet add .\SportStore.API\ package Microsoft.EntityFrameworkCore -v 7.0.0```
 
 для миграций
 - ```Microsoft.EntityFrameworkCore.Tools```
@@ -43,14 +51,14 @@ public class User : Base
 
 При установке пакетов надо соблюдать версионность относительно версии фреймворка .net В данном приложении применяется ```net7.0```
 
-Установить пакеты можно несколькими способами. Можно использовать встроенные средства, а можно применить команду
+**Замечание**: установить пакеты можно несколькими способами:
 
-```
-dotnet add .\SportStore.API\ package Microsoft.Entity.Framework -v 7.0.0
-```
+- dotnet cli
+- установка графических пакетов
+- Visual Studio
+- через файл ```csproj```
 
-
-В результате добавления пакетов ```project``` файл проекта ```SportStore.API``` будет выглядеть следующим образом:
+В результате добавления пакетов в ```SportStore.API.csproj``` будет выглядеть следующим образом:
 
 ```xml
 <Project Sdk="Microsoft.NET.Sdk.Web">
@@ -91,8 +99,13 @@ public class SportStoreContext : DbContext
     }
 }
 ```
-
 В параметрах подключения к базе данных поставьте свой ```UserName``` и ```Password```
+
+
+
+
+
+
 
 # Миграции
 
