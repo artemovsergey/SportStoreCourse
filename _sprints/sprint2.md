@@ -1,5 +1,8 @@
 # Sprint 2 Introduction in Angluar
 
+ установка инструмента командной строки Angular
+```npm install -g @angular/cli@latest```
+
 # Создание проекта Angular
 
 - установить инструмент командной строки angular
@@ -11,7 +14,6 @@
 - настройки: scss, ssr off
 
 - внести в gitignore папку ```node_modules``` и файл ```.angular```
-
 
 # Обзор архитектуры приложения Angular
 
@@ -224,86 +226,22 @@ app.UseCors(o => o.AllowAnyOrigin().AllowAnyHeader());
 
 **Задание**: создайте ```usersService``` получите данные из API в шаблон компонента ```home```.
 
-
-# Получение данных API
-
-- шаблон компонента ```home```
-```html
-<h3>Пользователи</h3>
-
-<p *ngIf="(users$ | async) == null">Данные загружаются...</p>
-
-<ul *ngFor="let user of users$ | async">
-  <li>{{user.id}}</li>
-</ul>
-```
-
-# UserService
-
-```ts
-import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import User from '../models/user'
-
-@Injectable({
-  providedIn: 'root'
-})
-export class UsersService {
-
-  constructor(private http:HttpClient) {}
-  
-  getUsers() {
-    const url = "http://localhost:5295/Users"
-    return this.http.get<User[]>(url)
-  }
-
-}
-```
-
-# Компонента home
-
-```ts
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import User from '../../models/user'
-import { UsersService } from '../../services/users.service';
-import { Observable, timeInterval, timeout } from 'rxjs';
-
-@Component({
-  selector: 'app-home',
-  standalone: true,
-  imports: [CommonModule],
-  templateUrl: './home.component.html',
-  styleUrl: './home.component.scss'
-})
-
-export class HomeComponent implements OnInit {
- 
-  users$: Observable<User[]> = new Observable
-  users:any = []
-
-  constructor(private userService:UsersService) { }
-
-  ngOnInit() {
-    this.users$ = this.userService.getUsers()
-    this.getUsers()
-  }
-
-  getUsers(){
-    this.userService.getUsers().subscribe(response => this.users = response)
-  }
-
-}
-
-```
-
 # Установка пакета Angular Material (Bootstrap, Tailwind, ngx-bootstrap)
 
 ```ng add @angular/material```
 
+При установке вас попросят выбрать тему, типографию и анимацию.
+
 # Вывод пользователей в виде таблицы 
 
-В шаблоне компонента применяются элементы из библиотеки пользовательского интерфейса Angular Material. Для отображения таблицы нужно импортировать модель ```MatTableModule```, а также объявить новое свойство в компоненте ```home```.
+В шаблоне компонента ```home``` применяются элементы из библиотеки пользовательского интерфейса ```Angular Material```. Для отображения таблицы нужно импортировать модель ```MatTableModule```,
+
+```ts
+import {MatTableModule} from '@angular/material/table';
+```
+
+
+ а также объявить новое свойство в компоненте ```home```, которое нужно для отображение таблицы.
 
 ```ts
 displayedColumns: string[] = ['id', 'name'];
@@ -331,24 +269,7 @@ home.component.html
 
 # Настройка https сертификата для localhost (опция)
 
-В этой статье описывается подробно процесс создания самоподписанного сертфиката для localhost.
-
-https://dzen.ru/a/ZQ4nAsQZ6GkuFw7_
-
-После создания файлов сертификатов и установки собственного центра сертификации на свой компьютер можно настроить приложение Angular на эти сертификаты. Перейдите в ```angular.json``` в раздел ```serve``` и пропишите пути до сертификата и ключа. 
-
-Это нужно для того, чтобы среда разработки была идентичной среде production, когда приложение будет развернуто в интернете.
-
-angular.json
-```json
-          "options": {
-            "sslCert": "./../../certificate/localhost.crt",
-            "sslKey": "./../../certificate/localhost.key",
-            "ssl": true
-          },
-```
-
-# Создание центра сертификации
+## Создание центра сертификации
 
 - создайте файл ```openssl.conf```
 
@@ -363,12 +284,12 @@ CN = localhost
 emailAddress = test@git.scc
 ```
 
-- выполните команду только в ```Git Bash```
+- выполните команду только в ```Git Bash``` в директории, где находится файл ```openssl.conf```:
 
 ```
- openssl req -x509 -newkey rsa:4096 -days 365 -nodes -keyout root_ca.key -out root_ca.crt -config openssl.conf
+openssl req -x509 -newkey rsa:4096 -days 365 -nodes -keyout root_ca.key -out root_ca.crt -config openssl.conf
 ```
-На выходе генерируются два файла: root_ca.key и root_ca.crt
+На выходе генерируются два файла: ```root_ca.key``` и ```root_ca.crt```
 
 
 # Генерация приватного ключа
@@ -384,7 +305,6 @@ openssl genrsa -out localhost.key 2048
 ```
 openssl req -new -key localhost.key -out localhost.csr -config openssl.conf
 ```
-
 На выходе генерируются ```localhost.csr```
 
 # Подпись запроса нашим центром сертификации 
@@ -415,17 +335,20 @@ openssl x509 -req \
 -CAcreateserial \
 -extfile localhost.ext
 
-
 На выходе генерируются ```localhost.crt```
-
 
 # Установить центр сертификации в Chrome
 
-- настройки -> безопасность -> сертификаты
+- Настройки -> Конфиденциальность и безопасность -> Безопасность -> Настроить серитфикаты
+
+- найдите доверенные центры сертификации и импортируйте файл ```localhost.crt```
+
+![](images/crt.png)
+
 
 # Настройка ssl для localhost в приложении Angular:
 
-- в файле ```angular.json``` вставьте секцию ```options``` в секцию ```serve``` c указанием пути к ssl сертификату
+- в файле ```angular.json``` вставьте в ```options``` в секцию ```serve``` c указанием пути к ssl сертификату и ключу.
 
 angular.json
 ```json
@@ -437,5 +360,6 @@ angular.json
 
 - запустите приложение ```npm run start``` или ```ng serve```. Приложение должно работать на https
 
-**Примечание**: установка инструмента командной строки Angular
-```npm install -g @angular/cli@latest```
+**Примечание**:
+В этой статье описывается подробно процесс создания самоподписанного сертфиката для localhost.
+https://dzen.ru/a/ZQ4nAsQZ6GkuFw7_
