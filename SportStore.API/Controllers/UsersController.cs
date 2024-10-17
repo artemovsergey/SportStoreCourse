@@ -44,13 +44,13 @@ public class UsersController : ControllerBase
 
 
     [HttpGet("{id}")]
-    public ActionResult GetUserById(Guid id){
+    public ActionResult GetUserById(int id){
        return Ok(_repo.FindUserById(id));
     }
 
 
     [HttpDelete]
-    public ActionResult DeleteUser(Guid id){
+    public ActionResult DeleteUser(int id){
         return Ok(_repo.DeleteUser(id));
     }
 
