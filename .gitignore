@@ -1,14 +1,11 @@
 ## git rm -r --cached
 
-
 .angular
 
 /bin/
 /obj/
 
 /node_modules/
-
-
 
 # User-specific files
 *.rsuser
