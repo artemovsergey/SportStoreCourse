@@ -1,436 +1,239 @@
-# Sprint 4 Register and Authentication in Angular
+# JWT. Реализация сервиса
 
-# Регистрация пользователя
+- создайте интерфейс
 
-- в проекте Angular в папке ```src``` создайте папку ```components``` и создайте компоненты ```header``` и ```users```. Перейдите в ```components``` и выполните команды. Так для ```header```:
-
-```
-ng g c header --skip-tests
-```
-- выполните для ```users```
-
-
-# Провайдер роутера
-
-```ts
-import { provideRouter } from '@angular/router';
-import { routes } from './app.routes';
+```Csharp
+    public interface ITokenService
+    {
+        string CreateToken(int UserId);
+    }
 ```
 
-- в коллекцию ```providers``` внесите новый элемент ```provideRouter(routes)```
+- установите пакет `Microsoft.IdentityModel.Tokens`
 
-# Роутинг
+- реализуйте сервис для генерации jwt - токена
 
-app.routes.ts
-```ts
-import { Routes } from '@angular/router';
-import { HeaderComponent } from '../components/header/header.component';
-import { HomeComponent } from '../components/home/home.component';
-import { UsersComponent } from '../components/users/users.component';
+```Csharp
+public class TokenService : ITokenService
+{
 
-export const routes: Routes = [
-    { path: 'header', component: HeaderComponent },
-    { path: 'users', component: UsersComponent },
-    { path: 'home', component: HomeComponent },
-    { path: '', component: HomeComponent },
-];
+    private readonly SymmetricSecurityKey _key;
+    public TokenService(IConfiguration config)
+    {
+      _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["TokenKey"]!));
+    }
+
+    public string CreateToken(string UserLogin)
+    {
+       var claims =  new List<Claim>{
+         new Claim(JwtRegisteredClaimNames.Name, UserLogin)
+       };
+
+       var creds = new SigningCredentials(_key, SecurityAlgorithms.HmacSha512Signature);
+
+       var tokenDecriptor = new SecurityTokenDescriptor(){
+         Subject = new ClaimsIdentity(claims),
+         Expires = DateTime.UtcNow.AddDays(7),
+         SigningCredentials = creds
+       };
+
+       var tokenHandler = new JwtSecurityTokenHandler();
+       var token = tokenHandler.CreateToken(tokenDecriptor);
+       return tokenHandler.WriteToken(token);
+
+    }
+}
 ```
 
-# Компонент router-outlen
+**Примечание**: значение `config["TokenKey"]` мы получаем из конфигурации `appsettings.json`. Это открытый ключ шифрования. Поэтому добавьте пару ключ-значение в файл `appsettings.Development.json`:
 
-- в шаблоне ``app`` внесите изменения:
-
-```html
-<app-header/>
-<router-outlet/>
-```
-
-# Angular Material
-
-```
-ng add @angular/material
-```
-
-в angular.json в разделе ```styles``` подключите предустановленную тему:
+appsettings.Development.json
 
 ```json
-"styles": [
-        "@angular/material/prebuilt-themes/indigo-pink.css",
-        "src/styles.scss"
-    ],
+"TokenKey": "super key password for jwt token token token token token token token token "
 ```
 
-# Настройка роутера 
+- в модель `User` добавьте новое свойство `public string Token {get; set;}`.
+- создайте миграцию и примените для обновления базы данных.
+- зарегистрируйте в контейнер DI контроллер `UserController`.
+- внедрите объект `ITokenService` в конструктор `UserController`.
+- в методе создания пользователя примените метод генерации токена из сервиса к полю `Token` у пользователя.
 
-В файле ```app.config.ts``` проверьте импорт функциональности для роутера
+# Middleware
 
-```ts
-import { provideRouter } from '@angular/router';
+- установите пакет `Microsoft.AspNetCore.Authentication.JwtBearer`
+
+Program.cs
+
+```Csharp
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.SaveToken = true;
+        options.RequireHttpsMetadata = false;
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = false,
+            ValidateAudience = false,
+            ValidateLifetime = false,
+            ValidateIssuerSigningKey = true,
+
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["TokenKey"]!)),
+        };
+    });
 ```
 
-и подключение провайдера в секцию ```providers```:
-
-```ts
- provideRouter(routes),
-```
-
-# Роутер
-
-В файле ```app.routes.ts``` пропишите все маршруты для компонентов:
-
-```ts
-import { Routes } from '@angular/router';
-import { HeaderComponent } from '../components/header/header.component';
-import { HomeComponent } from '../components/home/home.component';
-
-export const routes: Routes = [
-    { path: 'header', component: HeaderComponent },
-    { path: 'home', component: HomeComponent },
-    { path: '', component: HomeComponent },
-];
-```
-
-Теперь в шаблоне главного компонента ```app``` можно подключить роутер:
-
-```html
-<app-header/>
-<router-outlet/>
-```
-
-**Ресурсы для изучения**:
-
-https://angular-material.dev/articles/angular-material-3
-
-
-## Material Icons
-
-- установка пакета для локальной разработки
-
-- ```npm install material-design-icons --save```
-- ```npm install material-design-icons-iconfont --save```
-
-- подключение пакета в ```styles.scss```.
-
-```@import 'node_modules/material-design-icons-iconfont/dist/material-design-icons.css'```
-
-# Создание header
-
-
-- подключите в компоненте ```header``` модели ```MatIconModule```,```MatToolbarModule```,```MatButtonModule```.
-
-```html
-<mat-toolbar color="primary">
-  <button mat-icon-button >
-    <mat-icon>
-      home
-    </mat-icon>
-  </button>
-</mat-toolbar>
-```
-
-# Все пользователи
-
-```html
-  <a *ngIf="auth.currentUser$ | async"  mat-flat-button color="primary" [routerLink]="['/users']">
-    Пользователи
-  </a>
-```
-
-# Модель пользователя в компоненте header
-
-```ts
-model: any = {}
-```
-
-# Метод login в компоненте header
-
-```ts
-  login(){
-    return this.auth.login(this.model)
-    .subscribe(r => {console.log(r);} ,
-               e => console.log(e.error))
-  }
-```
-
-# Метод выхода в компоненте header
-
-```ts
-  logout(){
-    this.auth.logout();
-    // this.isLogged = false;
-    console.log("logout")
-  }
-```
-
-# Форма авторизации
-
-```html
-  <form *ngIf="(auth.currentUser$ | async) === null" (ngSubmit) ="login()" autocomplete="off">
-
-    <mat-form-field>
-      <mat-label>Login</mat-label>
-      <input matInput name="login" type="text" [(ngModel)] = "model.login" />
-    </mat-form-field>
-
-    <mat-form-field>
-      <mat-label>Password</mat-label>
-      <input matInput name="password" type="password" [(ngModel)] ="model.password" />
-    </mat-form-field>
-
-    <button *ngIf="(auth.currentUser$ | async) === null" mat-icon-button type="submit">
-      <mat-icon>
-        login
-      </mat-icon>
-    </button>
-
-  </form>
-```
-
-# Кнопка для выхода
-
-```html
-  <button *ngIf="auth.currentUser$ | async" type="button" mat-icon-button (click)="logout()">
-    <mat-icon>
-      logout
-    </mat-icon>
-  </button>
-```
-
-# Подключение сервиса в коструктор компонента header
-
-```ts
-constructor(public auth:AuthService){}
-```
-
-# Стили для компонента header
-
-```scss
-mat-form-field {
-  margin: 10px;
-}
-
-mat-toolbar{
-  height: auto;
-}
-```
-
-# Компоненте home. Шаблон
-
-```html
-<h1> {{title}}</h1>
-
-<table mat-table [dataSource]="users" class="mat-elevation-z8">
-  <ng-container matColumnDef="id">
-    <th mat-header-cell *matHeaderCellDef> Id </th>
-    <td mat-cell *matCellDef="let element"> {{element.id}} </td>
-  </ng-container>
-
-  <ng-container matColumnDef="login">
-    <th mat-header-cell *matHeaderCellDef> Name </th>
-    <td mat-cell *matCellDef="let element"> {{element.login}} </td>
-  </ng-container>
-
-  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-</table>
-```
-
-# Компоненте home
-
-```ts
-import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
-import  User from '../../models/user'
-import getLocalUsers from '../../services/users.service'
-import {MatTableModule} from '@angular/material/table';
-
-@Component({
-  selector: 'app-home',
-  standalone: true,
-  imports: [CommonModule, MatTableModule],
-  templateUrl: './home.component.html',
-  styleUrl: './home.component.scss'
-})
-
-export class HomeComponent implements OnInit {
-
-  users: User[] = []
-  title: string = "Home"
-  displayedColumns: string[] = ['id', 'login'];
-
-  constructor(private http:HttpClient) { }
-
-  ngOnInit(): void {
-    this.getUsers()
-    //this.users = getLocalUsers;
-  }
-
-  getUsers() {
-    this.http.get<User[]>('http://localhost:5290/api/User').subscribe({
-      next: response => this.users = response,
-      error: error => console.log(error)
-    })
-  }
-
-}
-```
-
-# Компоненет ```users```. Шаблон
-
-```html
-<ul>
-  <li *ngFor="let u of users">
-
-    <mat-card class="example-card" appearance="outlined">
-      <mat-card-header>
-        <div mat-card-avatar class="example-header-image"></div>
-        <mat-card-title>{{u.id}}</mat-card-title>
-        <mat-card-subtitle>{{u.login}}</mat-card-subtitle>
-      </mat-card-header>
-      <img mat-card-image src="https://material.angular.io/assets/img/examples/shiba2.jpg" alt="Photo of a Shiba Inu">
-      <mat-card-content>
-        <p>
-            User
-        </p>
-      </mat-card-content>
-      <mat-card-actions>
-        <button mat-button>LIKE</button>
-        <button mat-button>SHARE</button>
-      </mat-card-actions>
-    </mat-card>
-  </li>
-</ul>
-```
-
-# Компонент users
-
-```ts
-import { Component, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import {MatCardModule} from '@angular/material/card';
-import { CommonModule } from '@angular/common';
-
-@Component({
-  selector: 'app-users',
-  standalone: true,
-  imports: [MatCardModule, CommonModule],
-  templateUrl: './users.component.html',
-  styleUrl: './users.component.scss'
-})
-
-export class UsersComponent implements OnInit  {
-
-  users:any;
-
-  constructor(private http:HttpClient){}
-
-  ngOnInit(): void {
-     this.getUsers();
-  }
-
-  getUsers(){
-    return this.http.get("http://localhost:5290/api/user").subscribe(
-      response => {this.users = response; console.log(response)},
-      error => { console.log(error)}
-    )
-  }
-
-  getUsersAsync(){
-    return this.http.get("http://localhost:5050/api/users").subscribe(r => {r})
-  }
-}
-
-export interface IUser{
-   name: String,
-   age: number,
-   isLogged: boolean
-}
-```
-
-# userLocalService
-
-```ts
-import User from "../models/user";
-
-function getLocalUsers(): User[] {
-    var users = [{"id":"1","name":"user1","login":"login"},
-                 {"id":"2","name":"user2","login":"login"},
-                 {"id":"3","name":"user2","login":"login"}]
-    return users;
-}
-export default getLocalUsers()
-```
-
-# authService
-
-```ts
-import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { map } from 'rxjs/operators';
-import User from '../models/user';
-import { ReplaySubject } from 'rxjs';
-
-@Injectable({
-  providedIn: 'root'
-})
-export class AuthService {
-
-  baseUrl:String = "http://localhost:5050/api/";
-
-  private currentUserSource = new ReplaySubject<User>(1);
-  currentUser$ = this.currentUserSource.asObservable();
-
-  constructor(private http:HttpClient) { }
-
-  register(model:any){
-    model.roleid = 1
-    return this.http.post<User>(this.baseUrl + "Account/register", model).pipe(
-      map((response: User) => {
-        const user = response;
-        if(user){
-          console.log("Пользователь сохранен!")
-          this.currentUserSource.next(user);
+## Настройка Swagger для работы с jwt
+
+```Csharp
+builder.Services.AddSwaggerGen(c =>
+{
+
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Приложение", Version = "v2024" });
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Description = "Authorization using jwt token. Example: \"Bearer {token}\"",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.ApiKey
+    });
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            new string[] { }
         }
-      })
-    )
-  }
+    });
+});
+```
 
-  login(model:any){
-    model.roleid = 1
-    return this.http.post<User>(this.baseUrl + "Account/", model).pipe(
-      map((response: User) => {
-        const user = response;
-        if(user){
-          localStorage.setItem("user",JSON.stringify(user))
-          this.currentUserSource.next(user);
-        }
-      })
-    )
-  }
+- зарегистрируйте сервис авторизации `builder.Services.AddAuthorization();`, а затем подключите его в конвеейр сразу после процесса аутентификации
 
-  // setCurrentUser(user: User){
-  //   this.currentUserSource.next(user)
-  // }
+```Csharp
+app.UseAuthentication();
+app.UseAuthorization();
+```
 
-  logout(){
-    localStorage.removeItem("user")
-    this.currentUserSource.next(null!)
-  }
+- для удобного тестирования jwt создайте отдельный `TokenController`
+
+```Csharp
+[ApiController]
+[Route("api/[controller]")]
+public class TokenController : ControllerBase
+{
+    private readonly IConfiguration _config;
+    public TokenController(IConfiguration config)
+    {
+        _config = config;
+    }
+
+    [HttpGet]
+    public IActionResult GenerateToken()
+    {
+        var claims = new List<Claim> { new Claim(ClaimTypes.Name, "user") };
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:TokenKey"]!));
+
+        // создаем JWT-токен
+        var jwt = new JwtSecurityToken(
+            issuer: _config["Jwt:Issuer"],
+            audience: _config["Jwt:Audience"],
+            claims: claims,
+            expires: DateTime.UtcNow.Add(TimeSpan.FromDays(365)),
+            signingCredentials: new SigningCredentials(key, SecurityAlgorithms.HmacSha256));
+
+        return Ok(new JwtSecurityTokenHandler().WriteToken(jwt));
+    }
 }
 ```
 
-Реализуйте в приложении функции входа и регистрации, а также понимание:
-1. Создание компонентов с помощью Angular CLI
-2. Использование шаблонов форм Angular
-3. Использование сервисов Angular
-4. Понимание Observables
+- чтобы защитить конечную точку надо поставить атрибут [Authorize]. Теперь, чтобы получить доступ по конечной точке надо передать в запросе заголовка `Authorization` валидный jwt-токен формата: `Bearer {token}`. Проверить валидность токена можно на сайте - jwt.io. Тестирование удобно делать в Postman.
 
-# Использование структурных директив Angular для условного отображения элементов на странице
+```Csharp
+    [Authorize]
+    [HttpGet]
+    public ActionResult GetUser(){
+        return Ok(_repo.GetUsers());
+    }
+```
 
-# Связь компонентов от родительского к дочернему
+# Extensions. Методы расширения
 
-# Связь компонентов от дочернего компонента к родительскому
+- создайте папку `Extensions`, в которой создайте класс `JwtServices`
 
-- компонент header
-- выбор css фреймворка (Bootstrap, Tailwind, Angular Material)
+```Csharp
+public static class JwtServices
+{
+    public static IServiceCollection AddJwtServices(this IServiceCollection services, IConfiguration configuration){
+        services.AddSwaggerGen(c =>
+                        {
+                            c.SwaggerDoc("v1", new OpenApiInfo { Title = "Приложение", Version = "v2024" });
+                            c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                            {
+                                Description = "Authorization using jwt token. Example: \"Bearer {token}\"",
+                                Name = "Authorization",
+                                In = ParameterLocation.Header,
+                                Type = SecuritySchemeType.ApiKey
+                            });
+                            c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                            {
+                                {
+                                    new OpenApiSecurityScheme
+                                    {
+                                        Reference = new OpenApiReference
+                                        {
+                                            Type = ReferenceType.SecurityScheme,
+                                            Id = "Bearer"
+                                        }
+                                    },
+                                    new string[] { }
+                                }
+                            });
+                        });
+        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                        .AddJwtBearer(options =>
+                        {
+                            options.SaveToken = true;
+                            options.RequireHttpsMetadata = false;
+                            options.TokenValidationParameters = new TokenValidationParameters
+                            {
+                                ValidateIssuer = false,
+                                ValidateAudience = false,
+                                ValidateLifetime = false,
+                                ValidateIssuerSigningKey = true,
+
+                                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["TokenKey"]!)),
+                            };
+                        });
+        services.AddAuthorization();
+
+        return services;
+    }
+}
+```
+
+Теперь мы вынесли эту логику в отдельный файл и можем подключить это все одним сервисом.
+
+```Csharp
+builder.Services.AddJwtServices(builder.Configuration);
+```
+
+**Примечание**: настройте уровень логирования для отслеживания процесса работы с jwt в файле `appsettings.json`
+
+```Csharp
+"Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning",
+      "Microsoft.AspNetCore.Authentication": "Debug"
+    }
+  }
+```
+
+**Задание 1**: протестируйте jwt-аутентификацию c помошью Swagger, Postman, http-request.
