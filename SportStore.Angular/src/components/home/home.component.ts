@@ -3,8 +3,7 @@ import { CommonModule } from '@angular/common';
 import User from '../../models/user'
 import { UsersService } from '../../services/users.service';
 import { Observable, timeInterval, timeout } from 'rxjs';
-import {MatTableDataSource, MatTableModule} from '@angular/material/table';
-import IUser from '../../models/user';
+import {MatTableModule} from '@angular/material/table';
 
 @Component({
   selector: 'app-home',
@@ -20,7 +19,7 @@ export class HomeComponent implements OnInit {
 
   users: User[] = []
   
-  displayedColumns: string[] = ['id', 'name'];
+  displayedColumns: string[] = ['id','login','name'];
   
   title:string = "Пользователи"
 

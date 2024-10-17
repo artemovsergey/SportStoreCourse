@@ -192,7 +192,10 @@ public class UserDto
 **Замечание**: Эквивалентом и краткой записью для класса со свойствами является `record`:
 
 ```Csharp
-public record UserRecordDto(string Login, string Password);
+public record UserRecordDto {
+  public required string Login {get; init;}
+  public required string Password {get; init;}
+};
 ```
 
 # Seed Data - генерация тестовых данных
@@ -249,6 +252,11 @@ public record UserRecordDto(string Login, string Password);
     }
 ```
 
+# Регистрация реализации UserRepository
+
+```Csharp
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+```
 
 # EF Configuration (option)
 Настройка каждого атрибута, связей, типов данных в конкретной базе данных
