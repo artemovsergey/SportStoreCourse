@@ -1,17 +1,14 @@
-# Sprint 2 Introduction in Angluar
-
- установка инструмента командной строки Angular
-```npm install -g @angular/cli@latest```
+# Sprint 2 Введение в Angluar
 
 # Создание проекта Angular
 
-- установить инструмент командной строки angular
-
+- установить инструмент командной строки Angular
 ```npm install -g @angular/cli@latest```
 
+- создание проекта
 ```ng new SportStore.Angular```
 
-- настройки: scss, ssr off
+Примечание: при создании проекта настройки: препроцессор scss, ssr off
 
 - внести в gitignore папку ```node_modules``` и файл ```.angular```
 
@@ -20,7 +17,7 @@
 Проверка работоспособности
 ```ng serve```
 
-при запуске не отправлять данные 
+при запуске не отправлять данные по статистике
 
 # Создание компонента
 
@@ -30,7 +27,7 @@
 
 # Рендеринг компонента в главном компоненте
 
-В шаблоне компоннета ```app``` подключите новый компонент ```home```.
+В шаблоне компонента ```app``` подключите новый компонент ```home```.
 
 app.component.html
 ```html
@@ -54,7 +51,6 @@ export class AppComponent {
   title = 'SportStore.Angular';
 }
 ```
-
 
 # Настройка HttpClient
 
@@ -80,7 +76,7 @@ export const appConfig: ApplicationConfig = {
 - создайте папку ```models```, в котороой создайте файл ```user.ts```
 
 ```ts
-export default interface IUser {
+export default interface User {
   id: string;
   name: string;
 }
@@ -110,7 +106,6 @@ export class UsersLocalService {
   }
 
 }
-
 ```
 
 Сделайте запрос к локальной коллекции пользователей в компоненте ```home```;
@@ -137,12 +132,11 @@ export class HomeComponent implements OnInit {
   users: User[] = []
   title: string = "Home"
 
-  constructor(private http:HttpClient, private usersLocalService:UsersLocalService) { }
+  constructor(private usersLocalService:UsersLocalService) { }
 
   ngOnInit(): void {
     this.users = this.usersLocalService.getLocalUsers();
   }
-
 }
 ```
 
@@ -226,7 +220,7 @@ app.UseCors(o => o.AllowAnyOrigin().AllowAnyHeader());
 
 **Задание**: создайте ```usersService``` получите данные из API в шаблон компонента ```home```.
 
-# Установка пакета Angular Material (Bootstrap, Tailwind, ngx-bootstrap)
+# Установка пакета Angular Material
 
 ```ng add @angular/material```
 
@@ -240,8 +234,7 @@ app.UseCors(o => o.AllowAnyOrigin().AllowAnyHeader());
 import {MatTableModule} from '@angular/material/table';
 ```
 
-
- а также объявить новое свойство в компоненте ```home```, которое нужно для отображение таблицы.
+ а также объявить новое свойство ```displayedColumns``` в компоненте ```home```, которое нужно для отображение таблицы.
 
 ```ts
 displayedColumns: string[] = ['id', 'name'];
@@ -339,11 +332,11 @@ openssl x509 -req \
 
 # Установить центр сертификации в Chrome
 
-- Настройки -> Конфиденциальность и безопасность -> Безопасность -> Настроить серитфикаты
+- Настройки -> Конфиденциальность и безопасность -> Безопасность -> Настроить сертификаты
 
 - найдите доверенные центры сертификации и импортируйте файл ```localhost.crt```
 
-![](images/crt.png)
+![](../_sprints/images/crt.png)
 
 
 # Настройка ssl для localhost в приложении Angular:
