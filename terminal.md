@@ -5,6 +5,10 @@
 notepad $Profile
 New-Item -ItemType File -Path $PROFILE -Force
 
+Замечание: если нет прав администратора
+
+```Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser```
+
 ## Настройка
 
 ```txt
@@ -54,6 +58,11 @@ function prompt {
 ## Настройка 
 
 ```
+
+# Load Angular CLI autocompletion.
+# source <(ng completion script)
+
+
 if test -f /etc/profile.d/git-sdk.sh
 then
 	TITLEPREFIX=SDK-${MSYSTEM#MINGW}
@@ -104,5 +113,6 @@ then
 		. "$c"
 	done
 fi
+
 
 ```
