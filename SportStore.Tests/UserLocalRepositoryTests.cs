@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 using SportStore.API.Entities;
 using SportStore.API.Repositories;
@@ -10,6 +12,7 @@ namespace SportStore.Tests;
 public class UserLocalRepositoryTests
 {
     private readonly UserLocalRepository _userLocalRepository;
+    public HMACSHA512 hmac = new HMACSHA512();
     public UserLocalRepositoryTests()
     {
         _userLocalRepository = new UserLocalRepository();
@@ -19,7 +22,9 @@ public class UserLocalRepositoryTests
     public void CreateUser_ShouldReturnNewUserWithGeneratedId()
     {
         // Arrange
-        var newUser = new User { Name = "Test User" };
+        var newUser = new User {Name = "Test User",
+                                PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes("Password")),
+                                PasswordSalt = hmac.Key};
         // Act
         var createdUser = _userLocalRepository.CreateUser(newUser);
         // Assert
@@ -33,7 +38,11 @@ public class UserLocalRepositoryTests
     {
         // Arrange
         var UserLocalRepository = new UserLocalRepository();
-        var testUser = new User { Id = 1, Name = "Test User" };
+        var testUser = new User { Id = 1,
+                                  Name = "Test User",
+                                  PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes("Password")),
+                                  PasswordSalt = hmac.Key };
+
         UserLocalRepository.Users.Add(testUser);
 
         // Act
@@ -49,11 +58,19 @@ public class UserLocalRepositoryTests
     {
         // Arrange
         var UserLocalRepository = new UserLocalRepository();
-        var originalUser = new User { Id = 1, Name = "Original User" };
+        var originalUser = new User { Id = 1,
+                                      Name = "Original User",
+                                      PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes("Password")),
+                                      PasswordSalt = hmac.Key };
+
         UserLocalRepository.Users.Add(originalUser);
 
         // Act
-        var editedUser = new User { Id = originalUser.Id, Name = "Edited User" };
+        var editedUser = new User { Id = originalUser.Id,
+                                    Name = "Edited User",
+                                    PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes("Password")),
+                                    PasswordSalt = hmac.Key };
+
         var result = UserLocalRepository.EditUser(editedUser, originalUser.Id);
 
         // Assert
@@ -67,7 +84,11 @@ public class UserLocalRepositoryTests
     {
         // Arrange
         var UserLocalRepository = new UserLocalRepository();
-        var testUser = new User { Id = 1, Name = "Test User" };
+        var testUser = new User { Id = 1,
+                                  Name = "Test User",
+                                  PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes("Password")),
+                                  PasswordSalt = hmac.Key };
+
         UserLocalRepository.Users.Add(testUser);
 
         // Act
@@ -94,8 +115,13 @@ public class UserLocalRepositoryTests
     {
         // Arrange
         var UserLocalRepository = new UserLocalRepository();
-        var testUser1 = new User { Id = 1, Name = "User 1" };
-        var testUser2 = new User { Id = 1, Name = "User 2" };
+        var testUser1 = new User { Id = 1, Name = "User 1",
+                                   PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes("Password")),
+                                   PasswordSalt = hmac.Key };
+        var testUser2 = new User { Id = 1, Name = "User 2",
+                                   PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes("Password")),
+                                   PasswordSalt = hmac.Key };
+                                   
         UserLocalRepository.Users.Add(testUser1);
         UserLocalRepository.Users.Add(testUser2);
 

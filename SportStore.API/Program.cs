@@ -1,3 +1,4 @@
+using SportStore.API.Data;
 using SportStore.API.Interfaces;
 using SportStore.API.Repositories;
 
@@ -9,6 +10,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<IUserRepository, UserLocalRepository>();
+builder.Services.AddScoped<SportStoreContext>();
 builder.Services.AddCors();
 
 var app = builder.Build();
