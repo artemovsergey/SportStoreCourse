@@ -52,7 +52,8 @@ public class SeedController : ControllerBase
                 {
                     Login = user.Login,
                     PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(user.Password)),
-                    PasswordSalt = hmac.Key,
+                    PasswordSalt = hmac.Key
+                    
                 };
 
                 userToDb.Add(u);
