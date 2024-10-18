@@ -1,12 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
 using SportStore.API.Dto;
 using SportStore.API.Entities;
 using SportStore.API.Interfaces;
@@ -47,7 +42,7 @@ public class UsersController : ControllerBase
         return Ok(_repo.CreateUser(user));
     }
 
-    [Authorize]
+    // [Authorize]
     [HttpGet]
     public ActionResult GetUsers()
     {

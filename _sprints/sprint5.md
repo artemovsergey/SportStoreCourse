@@ -2,16 +2,22 @@
 
 # Регистрация пользователя
 
-- в проекте Angular в папке ```src``` создайте папку ```components``` и создайте компоненты ```header``` и ```users```. Перейдите в ```components``` и выполните команды. Так для ```header```:
+- в проекте Angular в папке ```components``` создайте компоненты ```header``` и ```users```. Для этого перейдите в ```components``` и выполните команды. 
+
+Так для ```header```:
 
 ```
 ng g c header --skip-tests
 ```
-- выполните для ```users```
+
+- выполните также для ```users```
 
 
 # Провайдер роутера
 
+- проверьте конфигурацию для роутера
+
+app.config.ts
 ```ts
 import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
@@ -38,20 +44,23 @@ export const routes: Routes = [
 
 # Компонент router-outlen
 
-- в шаблоне ``app`` внесите изменения:
+- в шаблоне ``app`` внесите изменения. Также импортируйте компонент ```header``` в ```app``` компонент.
 
 ```html
 <app-header/>
 <router-outlet/>
 ```
 
+
 # Angular Material
+
+- установите пакет
 
 ```
 ng add @angular/material
 ```
 
-в angular.json в разделе ```styles``` подключите предустановленную тему:
+в ```angular.json``` в разделе ```styles``` подключите предустановленную тему:
 
 ```json
 "styles": [
@@ -59,47 +68,6 @@ ng add @angular/material
         "src/styles.scss"
     ],
 ```
-
-# Настройка роутера 
-
-В файле ```app.config.ts``` проверьте импорт функциональности для роутера
-
-```ts
-import { provideRouter } from '@angular/router';
-```
-
-и подключение провайдера в секцию ```providers```:
-
-```ts
- provideRouter(routes),
-```
-
-# Роутер
-
-В файле ```app.routes.ts``` пропишите все маршруты для компонентов:
-
-```ts
-import { Routes } from '@angular/router';
-import { HeaderComponent } from '../components/header/header.component';
-import { HomeComponent } from '../components/home/home.component';
-
-export const routes: Routes = [
-    { path: 'header', component: HeaderComponent },
-    { path: 'home', component: HomeComponent },
-    { path: '', component: HomeComponent },
-];
-```
-
-Теперь в шаблоне главного компонента ```app``` можно подключить роутер:
-
-```html
-<app-header/>
-<router-outlet/>
-```
-
-**Ресурсы для изучения**:
-
-https://angular-material.dev/articles/angular-material-3
 
 
 ## Material Icons
@@ -111,24 +79,48 @@ https://angular-material.dev/articles/angular-material-3
 
 - подключение пакета в ```styles.scss```.
 
-```@import 'node_modules/material-design-icons-iconfont/dist/material-design-icons.css'```
+```@import '../node_modules/material-design-icons-iconfont/dist/material-design-icons.css'```
 
 # Создание header
 
-
-- подключите в компоненте ```header``` модели ```MatIconModule```,```MatToolbarModule```,```MatButtonModule```.
+- подключите в компоненте ```header``` модули ```MatIconModule```,```MatToolbarModule```,```MatButtonModule```.
 
 ```html
 <mat-toolbar color="primary">
+
   <button mat-icon-button >
     <mat-icon>
       home
     </mat-icon>
   </button>
+
 </mat-toolbar>
 ```
 
-# Все пользователи
+# Список всех пользователей
+
+- добавьте новую кнопку в ```header```, а также примените маршрутизацию к компоненту ```users```. Для этого импортируйте модуль ```RouterLink``` в компонент ```header```.
+
+```html
+  <button mat-icon-button [routerLink] = "['/users']">
+      <mat-icon>
+          people
+      </mat-icon>
+  </button>
+```
+
+- сделайте ссылку на корневую страницу для кнопки с домом.
+
+**Задание**: перенесите функционал вывода списка пользователей из компонента ```home``` в компонент ```users```. В компоненет ```home``` в шаблоне оставьте только приветствие пользователя.
+
+
+
+# Создать компонент auth
+
+
+
+
+
 
 ```html
   <a *ngIf="auth.currentUser$ | async"  mat-flat-button color="primary" [routerLink]="['/users']">
@@ -434,3 +426,7 @@ export class AuthService {
 
 - компонент header
 - выбор css фреймворка (Bootstrap, Tailwind, Angular Material)
+
+**Ресурсы для изучения**:
+
+https://angular-material.dev/articles/angular-material-3

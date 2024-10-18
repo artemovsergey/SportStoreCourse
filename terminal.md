@@ -1,5 +1,8 @@
 # PowerShell
 
+- Set-PSReadLineKeyHandler -Chord "Shift+Tab" -Function ForwardChar  
+- Set-PSReadLineOption -EditMode Emacs
+
 - для 7 версии
 
 notepad $Profile
