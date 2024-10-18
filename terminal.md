@@ -13,11 +13,11 @@ New-Item -ItemType File -Path $PROFILE -Force
 
 ```txt
 function Write-BranchName () {
+    try {
    
         $repoRoot = git rev-parse --show-toplevel
         if (Test-Path $repoRoot) {
             $branch = git rev-parse --abbrev-ref HEAD
-
             if ($branch -eq "HEAD") {
                 $branch = git rev-parse --short HEAD
                 Write-Host " ($branch)" -ForegroundColor "red"
@@ -26,6 +26,12 @@ function Write-BranchName () {
                 Write-Host " ($branch)" -ForegroundColor "blue"
             }
         }
+        else {
+            Write-Host " (no branches)" -ForegroundColor "yellow"
+        }
+    } catch {
+        Write-Host -ForegroundColor "yellow"
+    }
 }
 
 function prompt {
