@@ -9,7 +9,14 @@
     }
 ```
 
-- установите пакет `Microsoft.IdentityModel.Tokens`
+- установите пакет ```Microsoft.IdentityModel.Tokens``` и ```System.IdentityModel.Tokens.Jwt```: 
+
+```xml
+    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="7.7.1" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.7.1"/>
+```
+
+
 
 - реализуйте сервис для генерации jwt - токена в папке ```Services```.
 
@@ -23,10 +30,10 @@ public class TokenService : ITokenService
       _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["TokenKey"]!));
     }
 
-    public string CreateToken(string UserLogin)
+    public string CreateToken(int UserId)
     {
        var claims =  new List<Claim>{
-         new Claim(JwtRegisteredClaimNames.Name, UserLogin)
+         new Claim(JwtRegisteredClaimNames.Name, UserId.ToString())
        };
 
        var creds = new SigningCredentials(_key, SecurityAlgorithms.HmacSha512Signature);
@@ -45,22 +52,27 @@ public class TokenService : ITokenService
 }
 ```
 
-**Примечание**: значение `config["TokenKey"]` мы получаем из конфигурации `appsettings.json`. Это открытый ключ шифрования. Поэтому добавьте пару ключ-значение в файл `appsettings.Development.json`:
+**Примечание**: значение `config["TokenKey"]` мы получаем из конфигурации файла `appsettings.Development.json`. Это открытый ключ шифрования. Добавьте данную настройку после после настроек логгирования.
 
 appsettings.Development.json
-
 ```json
 "TokenKey": "super key password for jwt token token token token token token token token "
 ```
 
+# Изменение модели данных User
+
 - в модель `User` добавьте новое свойство `public string Token {get; set;}`.
 - создайте миграцию и примените для обновления базы данных.
-- зарегистрируйте в контейнер DI контроллер `UserController`.
+- зарегистрируйте в контейнер DI сервис `TokenService`.
 - внедрите объект `ITokenService` в конструктор `UserController`.
-- в методе создания пользователя примените метод генерации токена из сервиса к полю `Token` у пользователя.
+- в методе создания пользователя измените входную модель с ```User``` на ```UserDto``` 
+- в методе создания пользователя сформируйте из данных модели представления объект ```User```, сгенерировав ```PasswordHash``` и ```PasswordSalt```
+- примените метод генерации токена из сервиса к полю `Token` у пользователя.
+- проверьте конечную точку создания пользователя: у пользователя должны быть хэши паролей и токен
+- измените валидаторы с проверки поля ```Name``` на проверку поля ```Login```.
+
 
 # Middleware
-
 - установите пакет `Microsoft.AspNetCore.Authentication.JwtBearer`
 
 Program.cs
@@ -138,12 +150,12 @@ public class TokenController : ControllerBase
     public IActionResult GenerateToken()
     {
         var claims = new List<Claim> { new Claim(ClaimTypes.Name, "user") };
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:TokenKey"]!));
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["TokenKey"]!));
 
         // создаем JWT-токен
         var jwt = new JwtSecurityToken(
-            issuer: _config["Jwt:Issuer"],
-            audience: _config["Jwt:Audience"],
+            // issuer: _config["Jwt:Issuer"],
+            // audience: _config["Jwt:Audience"],
             claims: claims,
             expires: DateTime.UtcNow.Add(TimeSpan.FromDays(365)),
             signingCredentials: new SigningCredentials(key, SecurityAlgorithms.HmacSha256));
@@ -163,9 +175,12 @@ public class TokenController : ControllerBase
     }
 ```
 
+**Задание**: протестируйте конечную точку создания пользователя в jwt-аутентификацией в Postman и Swagger
+
+
 # Extensions. Методы расширения
 
-- создайте папку `Extensions`, в которой создайте класс `JwtServices`
+- создайте папку `Extensions`, в которой создайте статический класс `JwtServices`
 
 ```Csharp
 public static class JwtServices
@@ -218,7 +233,7 @@ public static class JwtServices
 }
 ```
 
-Теперь мы вынесли эту логику в отдельный файл и можем подключить это все одним сервисом.
+Теперь мы вынесем эту логику в отдельный файл и можем подключить это все одним сервисом.
 
 ```Csharp
 builder.Services.AddJwtServices(builder.Configuration);
@@ -236,4 +251,4 @@ builder.Services.AddJwtServices(builder.Configuration);
   }
 ```
 
-**Задание 1**: протестируйте jwt-аутентификацию c помошью Swagger, Postman, http-request.
+**Задание 1**: протестируйте jwt-аутентификацию c помошью http-request.
