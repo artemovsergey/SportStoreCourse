@@ -1,16 +1,23 @@
-# Sprint 2 Introduction in Angluar
-
- установка инструмента командной строки Angular
-```npm install -g @angular/cli@latest```
+# Sprint 2 Введение в Angluar
 
 # Создание проекта Angular
 
+- установить инструмент командной строки Angular
+```npm install -g @angular/cli@latest```
+
+- создание проекта
 ```ng new SportStore.Angular```
+
+Примечание: при создании проекта настройки: препроцессор scss, ssr off
+
+- внести в gitignore папку ```node_modules``` и файл ```.angular```
 
 # Обзор архитектуры приложения Angular
 
 Проверка работоспособности
 ```ng serve```
+
+при запуске не отправлять данные по статистике
 
 # Создание компонента
 
@@ -20,7 +27,7 @@
 
 # Рендеринг компонента в главном компоненте
 
-В шаблоне компоннета ```app``` подключите новый компонент ```home```.
+В шаблоне компонента ```app``` подключите новый компонент ```home```.
 
 app.component.html
 ```html
@@ -45,29 +52,20 @@ export class AppComponent {
 }
 ```
 
-
 # Настройка HttpClient
 
 Найдите в проекте файл конфигурации главного компонента ```app.config.ts``` и замените в нем код. Здесь определяется провайтер для работы с http.
 
 app.config.ts
 ```ts
-import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
-import { provideRouter } from '@angular/router';
-import { routes } from './app.routes';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
-import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 
 export const appConfig: ApplicationConfig = {
   providers: [
 
-              provideZoneChangeDetection({ eventCoalescing: true }),
-
-              provideRouter(routes),
-
-              provideHttpClient(
-                withInterceptorsFromDi()
-              ), provideAnimationsAsync(),
+            ...
+            provideHttpClient(withInterceptorsFromDi())
+            ...
 
             ]
 };
@@ -78,25 +76,36 @@ export const appConfig: ApplicationConfig = {
 - создайте папку ```models```, в котороой создайте файл ```user.ts```
 
 ```ts
-export default interface IUser {
+export default interface User {
   id: string;
   name: string;
 }
 ```
 
-- в папке ```src``` создайте папку ```services``` в которой создайте файла ```users.service.ts```. В этом файле определяется функция генерации локальных данны.
+- в папке ```src``` создайте папку ```services``` и выполните команду:
+
+```ng g s userslocal --skip-tests```
+
+В результате сгенерируется файл сервиса.
 
 ```ts
-import User from "../models/user";
+import { Injectable } from '@angular/core';
+import User from '../models/user'
 
-function getLocalUsers(): User[] {
-    var users = [{"id":"1","name":"user1"},
-                 {"id":"2","name":"user2"},
-                 {"id":"3","name":"user2"}]
+@Injectable({
+  providedIn: 'root'
+})
+export class UsersLocalService {
+
+  getLocalUsers(): User[] {
+    var users = [{ "id": "1", "name": "user1" },
+                 { "id": "2", "name": "user2" },
+                 { "id": "3", "name": "user3" }]
     return users;
-}
 
-export default getLocalUsers()
+  }
+
+}
 ```
 
 Сделайте запрос к локальной коллекции пользователей в компоненте ```home```;
@@ -107,7 +116,7 @@ import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import  User from '../../models/user'
-import getLocalUsers from '../../services/users.service'
+import { UsersLocalService } from '../../services/userslocal.service';
 
 @Component({
   selector: 'app-home',
@@ -123,14 +132,37 @@ export class HomeComponent implements OnInit {
   users: User[] = []
   title: string = "Home"
 
-  constructor(private http:HttpClient) { }
+  constructor(private usersLocalService:UsersLocalService) { }
 
   ngOnInit(): void {
-    this.users = getLocalUsers;
+    this.users = this.usersLocalService.getLocalUsers();
   }
-
 }
 ```
+
+# Управляющие конструкции в шаблоне компонента
+
+- в шаблоне компонента ```home``` поместите следующий код:
+
+```html
+<h3> Пользователи </h3>
+
+<ol *ngFor="let user of users">
+    <li> {{user.name}}</li>
+</ol>
+```
+
+или вы можете в шаблоне напрямую обращаться к сервису, если в конструкторе сделаете его ```public```.
+
+```html
+<ul *ngFor="let user of usersLocalService.getLocalUsers()">
+    <li> {{user.name}}</li>
+</ul>
+```
+
+```*ngFor``` - это директива, которая является простым циклом for. Для включения этой функциональности надо импортировать в компонент ```home``` модуль ```CommonModule```.
+
+# Получение данных API
 
 - теперь измените компонент ```home``` для получение данных о пользователях через API. 
 
@@ -159,8 +191,8 @@ export class HomeComponent implements OnInit {
   constructor(private http:HttpClient) { }
 
   ngOnInit(): void {
-    this.getUsers()
-    //this.users = getLocalUsers;
+    //this.users = this.usersLocalService.getLocalUsers();
+    this.getUsers();
   }
 
   getUsers() {
@@ -173,21 +205,9 @@ export class HomeComponent implements OnInit {
 }
 ```
 
-В файле шаблона компонента ```home``` надо отобразить коллекцию ```users```. Для этого применяются директивы ```*ngFor```, для подключения которой надо импортировать функциональность модуля ```CommonModule``` в компонент ```home```.
-
-home.component.html
-
-```html
-<h1> {{title}}</h1>
-
-<ul *ngFor="let user of users">
-  <li>{{user.name}}</li>
-</ul>
-```
-
 # Cors. Подключение и конфигурация
 
-По умолчанию политика браузера такова, что он не разрешает совершать запросы к ресурсу, который находится в другом домене, если принимающая сторона явно не разрешает это. То есть наше приложение Angular не сможет получить ответ от API, пока API не разрешит это.  Это политика CORS (Cross-Origin Resource Sharing).
+По умолчанию политика браузера такова, что он не разрешает совершать запросы к ресурсу, который находится в другом домене, если принимающая сторона явно не разрешает это. То есть наше приложение Angular не сможет получить ответ от API, пока API не разрешит это.  Эта политика назыаветяс CORS (Cross-Origin Resource Sharing).
 
 Теперь вернитесь в проект API и разрешите обращение к нему от всех источников и заголовков.
 
@@ -198,13 +218,23 @@ builder.Services.AddCors();
 app.UseCors(o => o.AllowAnyOrigin().AllowAnyHeader());
 ```
 
-# Установка пакета Angular Material (Bootstrap, Tailwind, ngx-bootstrap)
+**Задание**: создайте ```usersService``` получите данные из API в шаблон компонента ```home```.
+
+# Установка пакета Angular Material
 
 ```ng add @angular/material```
 
+При установке вас попросят выбрать тему, типографию и анимацию.
+
 # Вывод пользователей в виде таблицы 
 
-В шаблоне компонента применяются элементы из библиотеки пользовательского интерфейса Angular Material. Для отображения таблицы нужно импортировать модель ```MatTableModule```, а также объявить новое свойство в компоненте ```home```.
+В шаблоне компонента ```home``` применяются элементы из библиотеки пользовательского интерфейса ```Angular Material```. Для отображения таблицы нужно импортировать модель ```MatTableModule```,
+
+```ts
+import {MatTableModule} from '@angular/material/table';
+```
+
+ а также объявить новое свойство ```displayedColumns``` в компоненте ```home```, которое нужно для отображение таблицы.
 
 ```ts
 displayedColumns: string[] = ['id', 'name'];
@@ -247,10 +277,10 @@ CN = localhost
 emailAddress = test@git.scc
 ```
 
-- выполните команду только в ```Git Bash```
+- выполните команду только в ```Git Bash``` в директории, где находится файл ```openssl.conf```:
 
 ```
- openssl req -x509 -newkey rsa:4096 -days 365 -nodes -keyout root_ca.key -out root_ca.crt -config openssl.conf
+openssl req -x509 -newkey rsa:4096 -days 365 -nodes -keyout root_ca.key -out root_ca.crt -config openssl.conf
 ```
 На выходе генерируются два файла: ```root_ca.key``` и ```root_ca.crt```
 
@@ -268,7 +298,6 @@ openssl genrsa -out localhost.key 2048
 ```
 openssl req -new -key localhost.key -out localhost.csr -config openssl.conf
 ```
-
 На выходе генерируются ```localhost.csr```
 
 # Подпись запроса нашим центром сертификации 
@@ -299,17 +328,20 @@ openssl x509 -req \
 -CAcreateserial \
 -extfile localhost.ext
 
-
 На выходе генерируются ```localhost.crt```
-
 
 # Установить центр сертификации в Chrome
 
-- настройки -> безопасность -> сертификаты
+- Настройки -> Конфиденциальность и безопасность -> Безопасность -> Настроить сертификаты
+
+- найдите доверенные центры сертификации и импортируйте файл ```localhost.crt```
+
+![](../_sprints/images/crt.png)
+
 
 # Настройка ssl для localhost в приложении Angular:
 
-- в файле ```angular.json``` вставьте секцию ```options``` в секцию ```serve``` c указанием пути к ssl сертификату
+- в файле ```angular.json``` вставьте в ```options``` в секцию ```serve``` c указанием пути к ssl сертификату и ключу.
 
 angular.json
 ```json

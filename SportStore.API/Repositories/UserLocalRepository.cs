@@ -13,26 +13,26 @@ public class UserLocalRepository : IUserRepository
 
     public User CreateUser(User user)
     {
-        user.Id = Guid.NewGuid();
+        // user.Id = int.Newint();
         Users.Add(user);
         return user;
     }
 
-    public bool DeleteUser(Guid id)
+    public bool DeleteUser(int id)
     {
         var result = FindUserById(id);
         Users.Remove(result);
         return true;
     }
 
-    public User EditUser(User user, Guid id)
+    public User EditUser(User user, int id)
     {
         var result = FindUserById(id);
         result.Name = user.Name;
         return result;
     }
 
-    public User FindUserById(Guid id)
+    public User FindUserById(int id)
     {
         var result = Users.Where(u => u.Id == id).FirstOrDefault();
 
