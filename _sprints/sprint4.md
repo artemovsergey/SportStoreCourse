@@ -11,7 +11,7 @@
 
 - установите пакет `Microsoft.IdentityModel.Tokens`
 
-- реализуйте сервис для генерации jwt - токена
+- реализуйте сервис для генерации jwt - токена в папке ```Services```.
 
 ```Csharp
 public class TokenService : ITokenService
