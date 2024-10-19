@@ -113,69 +113,78 @@ ng add @angular/material
 
 **Задание**: перенесите функционал вывода списка пользователей из компонента ```home``` в компонент ```users```. В компоненет ```home``` в шаблоне оставьте только приветствие пользователя.
 
-
-
 # Создать компонент auth
 
+- в шаблоне компонента ```auth``` создайте форму:
+
+```html
+<div class="auth">
+    <h1> Авторизация </h1>
+    <form (ngSubmit)= "login()">
+        <p>
+            <input placeholder="Login" name="login" [(ngModel)]="model.login"/>
+        </p>
+        <p>
+            <input placeholder="Password" name="password" [(ngModel)]="model.password"/>
+        </p>
+       <button type="submit">Отправить</button>
+    </form>
+</div>
+```
+
+в компоненте ```auth``` создайте свойство ```model:any = {}``` и метод:
+
+```ts
+  login(){
+    console.log(this.model)
+  }
+```
+
+Также надо импортировать модуль ```FormModule``` для работы директивы ```[(ngModel)]```.
+
+Проверьте работу формы в консоли браузера
+
+
+# Подключение компонентов Angular Material
+
+- замените тег ```input``` для логина и пароля:
+
+```html
+  <mat-form-field>
+      <mat-label>Login</mat-label>
+      <input matInput name="login" type="text" [(ngModel)] = "model.login" />
+  </mat-form-field>
+```
+
+```html
+    <mat-form-field>
+        <mat-label>Password</mat-label>
+        <input matInput name="password" type="password" [(ngModel)] ="model.password" />
+    </mat-form-field>
+```
+
+- замените отображение кнопки
+
+```html
+    <button mat-icon-button type="submit">
+        <mat-icon>
+          login
+        </mat-icon>
+    </button>
+```
+
+- проверьте импорт в компоненте ```auth```: должны быть ```FormsModule, MatInputModule, MatFormField, MatLabel, MatIcon```
+
+**Замечание**: в консоли браузера может быть предупреждение про autocompele для полей ввода. Поставьте атрибут ```autocomplete="off"``` для полей ввода.
 
 
 
-
+# Условное отображение пользователей
 
 ```html
   <a *ngIf="auth.currentUser$ | async"  mat-flat-button color="primary" [routerLink]="['/users']">
     Пользователи
   </a>
-```
-
-# Модель пользователя в компоненте header
-
-```ts
-model: any = {}
-```
-
-# Метод login в компоненте header
-
-```ts
-  login(){
-    return this.auth.login(this.model)
-    .subscribe(r => {console.log(r);} ,
-               e => console.log(e.error))
-  }
-```
-
-# Метод выхода в компоненте header
-
-```ts
-  logout(){
-    this.auth.logout();
-    // this.isLogged = false;
-    console.log("logout")
-  }
-```
-
-# Форма авторизации
-
-```html
-  <form *ngIf="(auth.currentUser$ | async) === null" (ngSubmit) ="login()" autocomplete="off">
-
-    <mat-form-field>
-      <mat-label>Login</mat-label>
-      <input matInput name="login" type="text" [(ngModel)] = "model.login" />
-    </mat-form-field>
-
-    <mat-form-field>
-      <mat-label>Password</mat-label>
-      <input matInput name="password" type="password" [(ngModel)] ="model.password" />
-    </mat-form-field>
-
-    <button *ngIf="(auth.currentUser$ | async) === null" mat-icon-button type="submit">
-      <mat-icon>
-        login
-      </mat-icon>
-    </button>
-
-  </form>
 ```
 
 # Кнопка для выхода
@@ -188,171 +197,8 @@ model: any = {}
   </button>
 ```
 
-# Подключение сервиса в коструктор компонента header
+- создайте сервис ```auth.service.ts```
 
-```ts
-constructor(public auth:AuthService){}
-```
-
-# Стили для компонента header
-
-```scss
-mat-form-field {
-  margin: 10px;
-}
-
-mat-toolbar{
-  height: auto;
-}
-```
-
-# Компоненте home. Шаблон
-
-```html
-<h1> {{title}}</h1>
-
-<table mat-table [dataSource]="users" class="mat-elevation-z8">
-  <ng-container matColumnDef="id">
-    <th mat-header-cell *matHeaderCellDef> Id </th>
-    <td mat-cell *matCellDef="let element"> {{element.id}} </td>
-  </ng-container>
-
-  <ng-container matColumnDef="login">
-    <th mat-header-cell *matHeaderCellDef> Name </th>
-    <td mat-cell *matCellDef="let element"> {{element.login}} </td>
-  </ng-container>
-
-  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-</table>
-```
-
-# Компоненте home
-
-```ts
-import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
-import  User from '../../models/user'
-import getLocalUsers from '../../services/users.service'
-import {MatTableModule} from '@angular/material/table';
-
-@Component({
-  selector: 'app-home',
-  standalone: true,
-  imports: [CommonModule, MatTableModule],
-  templateUrl: './home.component.html',
-  styleUrl: './home.component.scss'
-})
-
-export class HomeComponent implements OnInit {
-
-  users: User[] = []
-  title: string = "Home"
-  displayedColumns: string[] = ['id', 'login'];
-
-  constructor(private http:HttpClient) { }
-
-  ngOnInit(): void {
-    this.getUsers()
-    //this.users = getLocalUsers;
-  }
-
-  getUsers() {
-    this.http.get<User[]>('http://localhost:5290/api/User').subscribe({
-      next: response => this.users = response,
-      error: error => console.log(error)
-    })
-  }
-
-}
-```
-
-# Компоненет ```users```. Шаблон
-
-```html
-<ul>
-  <li *ngFor="let u of users">
-
-    <mat-card class="example-card" appearance="outlined">
-      <mat-card-header>
-        <div mat-card-avatar class="example-header-image"></div>
-        <mat-card-title>{{u.id}}</mat-card-title>
-        <mat-card-subtitle>{{u.login}}</mat-card-subtitle>
-      </mat-card-header>
-      <img mat-card-image src="https://material.angular.io/assets/img/examples/shiba2.jpg" alt="Photo of a Shiba Inu">
-      <mat-card-content>
-        <p>
-            User
-        </p>
-      </mat-card-content>
-      <mat-card-actions>
-        <button mat-button>LIKE</button>
-        <button mat-button>SHARE</button>
-      </mat-card-actions>
-    </mat-card>
-  </li>
-</ul>
-```
-
-# Компонент users
-
-```ts
-import { Component, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import {MatCardModule} from '@angular/material/card';
-import { CommonModule } from '@angular/common';
-
-@Component({
-  selector: 'app-users',
-  standalone: true,
-  imports: [MatCardModule, CommonModule],
-  templateUrl: './users.component.html',
-  styleUrl: './users.component.scss'
-})
-
-export class UsersComponent implements OnInit  {
-
-  users:any;
-
-  constructor(private http:HttpClient){}
-
-  ngOnInit(): void {
-     this.getUsers();
-  }
-
-  getUsers(){
-    return this.http.get("http://localhost:5290/api/user").subscribe(
-      response => {this.users = response; console.log(response)},
-      error => { console.log(error)}
-    )
-  }
-
-  getUsersAsync(){
-    return this.http.get("http://localhost:5050/api/users").subscribe(r => {r})
-  }
-}
-
-export interface IUser{
-   name: String,
-   age: number,
-   isLogged: boolean
-}
-```
-
-# userLocalService
-
-```ts
-import User from "../models/user";
-
-function getLocalUsers(): User[] {
-    var users = [{"id":"1","name":"user1","login":"login"},
-                 {"id":"2","name":"user2","login":"login"},
-                 {"id":"3","name":"user2","login":"login"}]
-    return users;
-}
-export default getLocalUsers()
-```
 
 # authService
 
@@ -389,7 +235,7 @@ export class AuthService {
   }
 
   login(model:any){
-    model.roleid = 1
+    
     return this.http.post<User>(this.baseUrl + "Account/", model).pipe(
       map((response: User) => {
         const user = response;
@@ -423,10 +269,3 @@ export class AuthService {
 # Связь компонентов от родительского к дочернему
 
 # Связь компонентов от дочернего компонента к родительскому
-
-- компонент header
-- выбор css фреймворка (Bootstrap, Tailwind, Angular Material)
-
-**Ресурсы для изучения**:
-
-https://angular-material.dev/articles/angular-material-3
