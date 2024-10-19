@@ -1,6 +1,5 @@
 using System.Security.Cryptography;
 using System.Text;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SportStore.API.Dto;
 using SportStore.API.Entities;
@@ -20,6 +19,19 @@ public class UsersController : ControllerBase
     {
         _tokenService = tokenService;
         _repo = repo;
+    }
+
+
+    /// <summary>
+    /// Авторизация пользователя
+    /// </summary>
+    /// <param name="user"></param>
+    /// <returns></returns>
+    /// 
+    [HttpPost("Login")]
+    public ActionResult Login(UserDto userDto){
+        var user = _repo.FindUser(userDto.Login);
+        return CheckPasswordHash(userDto, user);
     }
 
     [HttpPost]
@@ -88,5 +100,31 @@ public class UsersController : ControllerBase
             throw new Exception($"{result.Errors.First().ErrorMessage}");
         }
     }
+
+
+    /// <summary>
+    /// Метод проверки пароля
+    /// </summary>
+    /// <param name="userDto"></param>
+    /// <param name="user"></param>
+    /// <returns></returns>    
+    private ActionResult CheckPasswordHash(UserDto userDto, User user)
+    {
+
+        using var hmac = new HMACSHA256(user.PasswordSalt);
+        var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(userDto.Password));
+
+        for (int i = 0; i < computedHash.Length; i++)
+        {
+            if (computedHash[i] != user.PasswordHash[i])
+            {
+                return Unauthorized($"Неправильный пароль");
+            }
+        }
+
+        return Ok(user);
+
+    }
+
 
 }
