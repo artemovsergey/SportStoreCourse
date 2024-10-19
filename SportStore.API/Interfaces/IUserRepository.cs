@@ -13,4 +13,5 @@ public interface IUserRepository
    User EditUser(User user, int id);
    bool DeleteUser(int id);
    User FindUserById(int id);
+   User FindUser(string login);
 }
