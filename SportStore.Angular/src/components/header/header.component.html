@@ -5,9 +5,10 @@
         </mat-icon>
     </button>
 
-    <button mat-icon-button [routerLink] = "['/users']">
+    <button *ngIf="authService.currentUser$ | async" mat-icon-button [routerLink] = "['/users']">
         <mat-icon>
             people
         </mat-icon>
     </button>
+
 </mat-toolbar>
