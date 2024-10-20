@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import User from '../models/user';
 import { map, ReplaySubject } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -12,6 +13,7 @@ export class AuthService {
 
   private currentUserSource = new ReplaySubject<User>(1);
   currentUser$ = this.currentUserSource.asObservable();
+  router: Router = new Router()
 
   constructor(private http:HttpClient) { }
 
@@ -39,6 +41,7 @@ export class AuthService {
   logout(){
     localStorage.removeItem("user")
     this.currentUserSource.next(null!);
+    this.router.navigate(["auth"])
   }
 
 }
