@@ -15,16 +15,9 @@
             </mat-form-field>
         </p>
 
-        <button *ngIf="(authService.currentUser$ | async) == null" mat-icon-button type="submit">
-            <mat-icon>
-              login
-            </mat-icon>
-        </button>
-
-        <button *ngIf="authService.currentUser$ | async" mat-icon-button type="button" (click)="logout()">
-            <mat-icon>
-              logout
-            </mat-icon>
+        <button mat-flat-button  color="primary" type="submit">
+            <mat-icon>login</mat-icon>
+            Войти
         </button>
 
     </form>
