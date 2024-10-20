@@ -1,29 +1,29 @@
+using SportStore.API.Data;
+using SportStore.API.Extensions;
 using SportStore.API.Interfaces;
 using SportStore.API.Repositories;
+using SportStore.API.Services;
 
 var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
-
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<IUserRepository, UserLocalRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddSingleton<ITokenService, TokenService>();
+builder.Services.AddScoped<SportStoreContext>();
+builder.Services.AddCors();
+builder.Services.AddAuthorization();
+builder.Services.AddJwtServices(builder.Configuration);
+
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
-app.UseHttpsRedirection();
-
+app.UseSwagger();
+app.UseSwaggerUI();
+// app.UseHttpsRedirection();
+app.UseAuthentication();
 app.UseAuthorization();
-
+app.UseCors(o => o.AllowAnyOrigin().AllowAnyHeader());
 app.MapControllers();
-
 app.Run();
