@@ -1,7 +1,3 @@
-using System.Text;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
 using SportStore.API.Data;
 using SportStore.API.Extensions;
 using SportStore.API.Interfaces;
@@ -28,6 +24,6 @@ app.UseSwaggerUI();
 // app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseCors(o => o.AllowAnyOrigin());
+app.UseCors(o => o.AllowAnyOrigin().AllowAnyHeader());
 app.MapControllers();
 app.Run();

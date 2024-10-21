@@ -1,17 +1,21 @@
-# Sprint 4 Register and Authentication in Angular
+# Sprint 5 Register and Authentication in Angular
 
 # Регистрация пользователя
 
-- в проекте Angular в папке ```src``` создайте папку ```components``` и создайте компоненты ```header``` и ```users```. Перейдите в ```components``` и выполните команды. Так для ```header```:
+- в проекте Angular в папке ```components``` создайте компоненты ```header``` и ```users```. Для этого перейдите в ```components``` и выполните команды: 
 
 ```
 ng g c header --skip-tests
 ```
-- выполните для ```users```
+
+- выполните также для ```users```
 
 
 # Провайдер роутера
 
+- проверьте конфигурацию для роутера
+
+app.config.ts
 ```ts
 import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
@@ -36,9 +40,9 @@ export const routes: Routes = [
 ];
 ```
 
-# Компонент router-outlen
+# Компонент router-outlet
 
-- в шаблоне ``app`` внесите изменения:
+- в шаблоне ``app`` внесите изменения. Также импортируйте компонент ```header``` в ```app``` компонент.
 
 ```html
 <app-header/>
@@ -47,11 +51,13 @@ export const routes: Routes = [
 
 # Angular Material
 
+- установите пакет
+
 ```
 ng add @angular/material
 ```
 
-в angular.json в разделе ```styles``` подключите предустановленную тему:
+в ```angular.json``` в разделе ```styles``` подключите предустановленную тему:
 
 ```json
 "styles": [
@@ -59,48 +65,6 @@ ng add @angular/material
         "src/styles.scss"
     ],
 ```
-
-# Настройка роутера 
-
-В файле ```app.config.ts``` проверьте импорт функциональности для роутера
-
-```ts
-import { provideRouter } from '@angular/router';
-```
-
-и подключение провайдера в секцию ```providers```:
-
-```ts
- provideRouter(routes),
-```
-
-# Роутер
-
-В файле ```app.routes.ts``` пропишите все маршруты для компонентов:
-
-```ts
-import { Routes } from '@angular/router';
-import { HeaderComponent } from '../components/header/header.component';
-import { HomeComponent } from '../components/home/home.component';
-
-export const routes: Routes = [
-    { path: 'header', component: HeaderComponent },
-    { path: 'home', component: HomeComponent },
-    { path: '', component: HomeComponent },
-];
-```
-
-Теперь в шаблоне главного компонента ```app``` можно подключить роутер:
-
-```html
-<app-header/>
-<router-outlet/>
-```
-
-**Ресурсы для изучения**:
-
-https://angular-material.dev/articles/angular-material-3
-
 
 ## Material Icons
 
@@ -111,258 +75,155 @@ https://angular-material.dev/articles/angular-material-3
 
 - подключение пакета в ```styles.scss```.
 
-```@import 'node_modules/material-design-icons-iconfont/dist/material-design-icons.css'```
+```@import '../node_modules/material-design-icons-iconfont/dist/material-design-icons.css'```
 
-# Создание header
+# Создание компонента header
 
+- подключите в компоненте ```header``` модули:
 
-- подключите в компоненте ```header``` модели ```MatIconModule```,```MatToolbarModule```,```MatButtonModule```.
+```ts
+imports: [CommonModule, MatIconModule, MatToolbarModule, MatButtonModule],
+```
+
+- в шаблоне компонента
 
 ```html
 <mat-toolbar color="primary">
-  <button mat-icon-button >
+
+  <button mat-button >
     <mat-icon>
       home
     </mat-icon>
+    Home
   </button>
+
 </mat-toolbar>
 ```
 
-# Все пользователи
+# Список всех пользователей
+
+- добавьте новую кнопку в ```mat-toolbar``` в ```header``` для отображения пользователей, а также примените маршрутизацию к этой кнопке к компоненту ```users``` по нажатию на кнопку. Для этого импортируйте модуль ```RouterLink``` в компонент ```header```.
 
 ```html
-  <a *ngIf="auth.currentUser$ | async"  mat-flat-button color="primary" [routerLink]="['/users']">
-    Пользователи
-  </a>
-```
-
-# Модель пользователя в компоненте header
-
-```ts
-model: any = {}
-```
-
-# Метод login в компоненте header
-
-```ts
-  login(){
-    return this.auth.login(this.model)
-    .subscribe(r => {console.log(r);} ,
-               e => console.log(e.error))
-  }
-```
-
-# Метод выхода в компоненте header
-
-```ts
-  logout(){
-    this.auth.logout();
-    // this.isLogged = false;
-    console.log("logout")
-  }
-```
-
-# Форма авторизации
-
-```html
-  <form *ngIf="(auth.currentUser$ | async) === null" (ngSubmit) ="login()" autocomplete="off">
-
-    <mat-form-field>
-      <mat-label>Login</mat-label>
-      <input matInput name="login" type="text" [(ngModel)] = "model.login" />
-    </mat-form-field>
-
-    <mat-form-field>
-      <mat-label>Password</mat-label>
-      <input matInput name="password" type="password" [(ngModel)] ="model.password" />
-    </mat-form-field>
-
-    <button *ngIf="(auth.currentUser$ | async) === null" mat-icon-button type="submit">
+  <button mat-button [routerLink] = "['/users']">
       <mat-icon>
-        login
+          people
       </mat-icon>
-    </button>
-
-  </form>
-```
-
-# Кнопка для выхода
-
-```html
-  <button *ngIf="auth.currentUser$ | async" type="button" mat-icon-button (click)="logout()">
-    <mat-icon>
-      logout
-    </mat-icon>
+      Пользователи
   </button>
 ```
 
-# Подключение сервиса в коструктор компонента header
+- сделайте ссылку на корневую страницу для кнопки с домом.
 
-```ts
-constructor(public auth:AuthService){}
-```
+**Задание**: перенесите функционал вывода списка пользователей из компонента ```home``` в компонент ```users```. В компоненете ```home``` в шаблоне оставьте только приветствие пользователя.
 
-# Стили для компонента header
+# Создание компонента auth
 
-```scss
-mat-form-field {
-  margin: 10px;
-}
-
-mat-toolbar{
-  height: auto;
-}
-```
-
-# Компоненте home. Шаблон
+- в шаблоне компонента ```auth``` создайте форму:
 
 ```html
-<h1> {{title}}</h1>
-
-<table mat-table [dataSource]="users" class="mat-elevation-z8">
-  <ng-container matColumnDef="id">
-    <th mat-header-cell *matHeaderCellDef> Id </th>
-    <td mat-cell *matCellDef="let element"> {{element.id}} </td>
-  </ng-container>
-
-  <ng-container matColumnDef="login">
-    <th mat-header-cell *matHeaderCellDef> Name </th>
-    <td mat-cell *matCellDef="let element"> {{element.login}} </td>
-  </ng-container>
-
-  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-</table>
-```
-
-# Компоненте home
-
-```ts
-import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
-import  User from '../../models/user'
-import getLocalUsers from '../../services/users.service'
-import {MatTableModule} from '@angular/material/table';
-
-@Component({
-  selector: 'app-home',
-  standalone: true,
-  imports: [CommonModule, MatTableModule],
-  templateUrl: './home.component.html',
-  styleUrl: './home.component.scss'
-})
-
-export class HomeComponent implements OnInit {
-
-  users: User[] = []
-  title: string = "Home"
-  displayedColumns: string[] = ['id', 'login'];
-
-  constructor(private http:HttpClient) { }
-
-  ngOnInit(): void {
-    this.getUsers()
-    //this.users = getLocalUsers;
-  }
-
-  getUsers() {
-    this.http.get<User[]>('http://localhost:5290/api/User').subscribe({
-      next: response => this.users = response,
-      error: error => console.log(error)
-    })
-  }
-
-}
-```
-
-# Компоненет ```users```. Шаблон
-
-```html
-<ul>
-  <li *ngFor="let u of users">
-
-    <mat-card class="example-card" appearance="outlined">
-      <mat-card-header>
-        <div mat-card-avatar class="example-header-image"></div>
-        <mat-card-title>{{u.id}}</mat-card-title>
-        <mat-card-subtitle>{{u.login}}</mat-card-subtitle>
-      </mat-card-header>
-      <img mat-card-image src="https://material.angular.io/assets/img/examples/shiba2.jpg" alt="Photo of a Shiba Inu">
-      <mat-card-content>
+<div class="auth">
+    <h1> Авторизация </h1>
+    <form (ngSubmit)= "login()">
         <p>
-            User
+            <input placeholder="Login" name="login" [(ngModel)]="model.login"/>
         </p>
-      </mat-card-content>
-      <mat-card-actions>
-        <button mat-button>LIKE</button>
-        <button mat-button>SHARE</button>
-      </mat-card-actions>
-    </mat-card>
-  </li>
-</ul>
+        <p>
+            <input placeholder="Password" name="password" [(ngModel)]="model.password"/>
+        </p>
+       <button type="submit">Отправить</button>
+    </form>
+</div>
 ```
 
-# Компонент users
+в компоненте ```auth``` создайте свойство ```model:any = {}``` и метод:
 
 ```ts
-import { Component, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import {MatCardModule} from '@angular/material/card';
-import { CommonModule } from '@angular/common';
-
-@Component({
-  selector: 'app-users',
-  standalone: true,
-  imports: [MatCardModule, CommonModule],
-  templateUrl: './users.component.html',
-  styleUrl: './users.component.scss'
-})
-
-export class UsersComponent implements OnInit  {
-
-  users:any;
-
-  constructor(private http:HttpClient){}
-
-  ngOnInit(): void {
-     this.getUsers();
+  login(){
+    console.log(this.model)
   }
-
-  getUsers(){
-    return this.http.get("http://localhost:5290/api/user").subscribe(
-      response => {this.users = response; console.log(response)},
-      error => { console.log(error)}
-    )
-  }
-
-  getUsersAsync(){
-    return this.http.get("http://localhost:5050/api/users").subscribe(r => {r})
-  }
-}
-
-export interface IUser{
-   name: String,
-   age: number,
-   isLogged: boolean
-}
 ```
 
-# userLocalService
+Также надо импортировать модуль ```FormModule``` для работы директивы ```[(ngModel)]```.
 
-```ts
-import User from "../models/user";
+Проверьте работу формы в консоли браузера
 
-function getLocalUsers(): User[] {
-    var users = [{"id":"1","name":"user1","login":"login"},
-                 {"id":"2","name":"user2","login":"login"},
-                 {"id":"3","name":"user2","login":"login"}]
-    return users;
-}
-export default getLocalUsers()
+
+# Подключение компонентов Angular Material
+
+- замените тег ```input``` для логина и пароля:
+
+```html
+  <mat-form-field>
+      <mat-label>Login</mat-label>
+      <input matInput name="login" type="text" [(ngModel)] = "model.login" />
+  </mat-form-field>
 ```
 
-# authService
+```html
+    <mat-form-field>
+        <mat-label>Password</mat-label>
+        <input matInput name="password" type="password" [(ngModel)] ="model.password" />
+    </mat-form-field>
+```
+
+- замените отображение кнопки
+
+```html
+    <button mat-button color="primary" type="submit">
+        <mat-icon>
+          login
+        </mat-icon>
+        Войти
+    </button>
+```
+
+- проверьте импорт в компоненте ```auth```: должны быть ```FormsModule, MatInputModule, MatFormField, MatLabel, MatIcon```
+
+**Замечание**: в консоли браузера может быть предупреждение про autocompele для полей ввода. Поставьте атрибут ```autocomplete="off"``` для полей ввода.
+
+# Создание метода авторизации в API
+
+- создайте метод в ```UsersController```. Чтобы его создать надо добавить сингнатуру в интерфейс и метод в ```UserRepository```.
+
+```Csharp
+    [HttpPost("Login")]
+    public ActionResult Login(UserDto userDto){
+        var user = _repo.FindUser(userDto.Login);
+        return CheckPasswordHash(userDto, user);
+    }
+```
+
+- проверку логики пароля вынесите в отдельный приватный метод
+
+```Csharp
+private ActionResult CheckPasswordHash(UserDto userDto, User user)
+    {
+
+        using var hmac = new HMACSHA256(user.PasswordSalt);
+        var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(userDto.Password));
+
+        for (int i = 0; i < computedHash.Length; i++)
+        {
+            if (computedHash[i] != user.PasswordHash[i])
+            {
+                return Unauthorized($"Неправильный пароль");
+            }
+        }
+
+        return Ok(user);
+    }
+```
+
+- проверьте работу метода в API
+
+# AuthService
+
+- создайте сервис ```auth.service.ts```:
+
+```
+ng g s auth --skip-tests
+```
 
 ```ts
 import { HttpClient } from '@angular/common/http';
@@ -376,61 +237,148 @@ import { ReplaySubject } from 'rxjs';
 })
 export class AuthService {
 
-  baseUrl:String = "http://localhost:5050/api/";
+  baseUrl:String = "http://localhost:[port]/api/";
 
   private currentUserSource = new ReplaySubject<User>(1);
   currentUser$ = this.currentUserSource.asObservable();
 
   constructor(private http:HttpClient) { }
 
-  register(model:any){
-    model.roleid = 1
-    return this.http.post<User>(this.baseUrl + "Account/register", model).pipe(
-      map((response: User) => {
-        const user = response;
-        if(user){
-          console.log("Пользователь сохранен!")
-          this.currentUserSource.next(user);
-        }
-      })
-    )
-  }
-
   login(model:any){
-    model.roleid = 1
-    return this.http.post<User>(this.baseUrl + "Account/", model).pipe(
+    
+    return this.http.post<User>(this.baseUrl + "Users/Login", model).pipe(
       map((response: User) => {
         const user = response;
         if(user){
           localStorage.setItem("user",JSON.stringify(user))
           this.currentUserSource.next(user);
+          console.log(user)
+        }
+        else{
+          console.log(response)
         }
       })
     )
   }
 
-  // setCurrentUser(user: User){
-  //   this.currentUserSource.next(user)
-  // }
-
-  logout(){
-    localStorage.removeItem("user")
-    this.currentUserSource.next(null!)
-  }
 }
 ```
 
-Реализуйте в приложении функции входа и регистрации, а также понимание:
-1. Создание компонентов с помощью Angular CLI
-2. Использование шаблонов форм Angular
-3. Использование сервисов Angular
-4. Понимание Observables
+- в методе компонента ```auth``` вызовите метод сервиса ```authService```, предварительно запросив его в конструкторе компонента.
 
-# Использование структурных директив Angular для условного отображения элементов на странице
+```ts
+  login(){
+    this.authService.login(this.model).subscribe({next: r => console.log(r), error: e => console.log(e)})
+  }
+```
 
-# Связь компонентов от родительского к дочернему
+**Замечание**: Observable-объекты - это ленивые объекты, на которые надо подписаться, чтобы получить результат. После успешного ответа от API, мы сохраняем пользователя в ```localStorage``` браузера, сериализуя его в json.
 
-# Связь компонентов от дочернего компонента к родительскому
+- после успешной авторизации надо выполнить переход на компонент ```home```. Для этого создайте объект роутера:
 
-- компонент header
-- выбор css фреймворка (Bootstrap, Tailwind, Angular Material)
+```ts
+router:Router = new Router()
+```
+- добавьте логику перехода в методе ```login``` компонента ```auth```:
+
+```ts
+  login(){
+    this.authService.login(this.model).subscribe({next: r => {this.router.navigate(["home"])}, error: e => console.log(e)})
+  }
+```
+- проверьте ```localStorage``` на предмет объекта по ключу ```user```
+
+
+# Регистрация
+
+- создайте новый компонент ```sign```
+
+- добавьте в ```authService``` метод ```register```:
+
+```ts
+  register(model:any){
+    return this.http.post(this.baseUrl +"Users/", model)
+  }
+```
+
+- теперь в компоненте ```sign``` создайте метод ```sign```, который вызывает метод сервиса:
+
+```ts
+  sign(){
+    this.authService.register(this.model).subscribe({next: r => console.log(r),                                                 error: e => console.log(e.error)})
+  }
+```
+
+- в шаблоне компонента ```sign``` в форме примените метод ```sign``` одноименного компонента:
+
+```html
+
+<div class="sign">
+    <h1> Регистрация </h1>
+    <form (ngSubmit)= "sign()" autocomplete="off">
+        <p>
+            <mat-form-field>
+                <mat-label>Login</mat-label>
+                <input matInput name="login" type="text" [(ngModel)] = "model.login" autocomplete="off" />
+            </mat-form-field>
+        </p>
+        <p>
+            <mat-form-field>
+                <mat-label>Password</mat-label>
+                <input matInput name="password" type="password" [(ngModel)] ="model.password" autocomplete="off" />
+            </mat-form-field>
+        </p>
+        <button color="primary" mat-flat-button type="submit">
+            Создать
+        </button>
+    </form>
+</div>
+```
+
+- проверьте импорт модулей в компоненте ```sign```
+
+```ts
+imports: [MatButton, MatFormField, CommonModule, MatLabel, FormsModule, MatIcon, MatInputModule]
+```
+
+**Задание**: при успешной регистрации перейдите на компонент авторизации.
+
+# Условный рендеринг и работа с состоянием
+
+- создайте кнопку выхода в шаблоне компонента ```header```
+
+```html
+    <button mat-button type="button">
+        <mat-icon>
+          logout
+        </mat-icon>
+        Выход
+    </button>
+```
+
+- если пользователь авторизован, то надо показывать кнопку выхода и кнопку списка всех пользоватлей,а если нет, то не показывать кнопки. Примените директиву для условного рендеринга к атрибуту ```button```:
+
+```ts
+*ngIf="authService.currentUser$ | async"
+```
+
+- в сервисе ```authService``` напишите логику метода для выхода:
+
+```ts
+  logout(){
+    localStorage.removeItem("user")
+    this.currentUserSource.next(null!);
+  }
+```
+
+- далее метод будет выполняться на событии ```click```:
+
+```html
+(click)="authService.logout()"
+```
+
+**Замечание**: объект ```authService``` в конструкторе должен быть ```public```, чтобы можно было применять методы сервиса в шаблоне компонента.
+
+**Задание**: после выполения метода ```logout()``` надо перейти на компонент авторизации с помощью роутера. Настройте логику маршрутизации из сервиса ```AuthService```.
+
+**Задание**: добавьте кнопку "Регистрация" в компонент ```header```.

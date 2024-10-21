@@ -32,6 +32,11 @@ public class UserLocalRepository : IUserRepository
         return result;
     }
 
+    public User FindUser(string login)
+    {
+        throw new NotImplementedException();
+    }
+
     public User FindUserById(int id)
     {
         var result = Users.Where(u => u.Id == id).FirstOrDefault();

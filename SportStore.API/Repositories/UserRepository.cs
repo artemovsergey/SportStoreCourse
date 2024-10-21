@@ -43,6 +43,12 @@ public class UserRepository : IUserRepository
         throw new NotImplementedException();
     }
 
+    public User FindUser(string login)
+    {
+       var user = _db.Users.Where(u => u.Login == login).FirstOrDefault<User>();
+       return  user != null ? user : throw new Exception("Пользователь не найден"); 
+    }
+
     public User FindUserById(int id)
     {
         throw new NotImplementedException();

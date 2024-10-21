@@ -1,0 +1,25 @@
+
+<div class="auth">
+    <h1> Авторизация </h1>
+    <form (ngSubmit)= "login()" autocomplete="off">
+        <p>
+            <mat-form-field>
+                <mat-label>Login</mat-label>
+                <input matInput name="login" type="text" [(ngModel)] = "model.login" autocomplete="off" />
+            </mat-form-field>
+        </p>
+        <p>
+            <mat-form-field>
+                <mat-label>Password</mat-label>
+                <input matInput name="password" type="password" [(ngModel)] ="model.password" autocomplete="off" />
+            </mat-form-field>
+        </p>
+
+        <button mat-flat-button  color="primary" type="submit">
+            <mat-icon>login</mat-icon>
+            Войти
+        </button>
+
+    </form>
+</div>
+
