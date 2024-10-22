@@ -1,7 +1,20 @@
+
+
+
 <div class="users">
+
+  <mat-form-field>
+    <mat-label>Режим отображения</mat-label>
+    <mat-select [(value)] = "viewMode">
+      @for (view of ["Таблица", "Карточки"]; track view) {
+        <mat-option [value]="view">{{view}}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
     <h1> {{title}}</h1>
   
-    <table mat-table [dataSource]="users" class="mat-elevation-z8">
+    <table *ngIf="(viewMode == 'Таблица') == true" mat-table [dataSource]="users" class="mat-elevation-z8">
       <ng-container matColumnDef="id">
         <th mat-header-cell *matHeaderCellDef> Guid </th>
         <td mat-cell *matCellDef="let element"> {{element.id}} </td>
@@ -20,5 +33,15 @@
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
     </table>
+
+</div>
+
+<div *ngIf="(viewMode == 'Карточки') == true" class="users"> 
+
+  <mat-list role="list"  *ngFor="let u of users">
+      <app-user [u] = "u" (currentUserState)="showCurrentUser($event)"/>
+  </mat-list>
   
-  </div>
+</div>
+
+
