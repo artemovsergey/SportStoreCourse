@@ -10,6 +10,8 @@ export const routes: Routes = [
     { path: 'auth', component: AuthComponent },
     { path: 'sign', component: SignComponent },
     { path: 'users', component: UsersComponent },
+    { path: 'users/:id', component: UsersComponent },
     { path: 'home', component: HomeComponent },
     { path: '', component: HomeComponent },
+    { path: "**", component: HomeComponent, pathMatch: 'full'}
 ];

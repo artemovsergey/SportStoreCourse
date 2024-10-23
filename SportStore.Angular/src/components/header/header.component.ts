@@ -2,9 +2,11 @@ import { Component } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { CommonModule } from '@angular/common';
+import { MatChipOption } from '@angular/material/chips';
+
 
 @Component({
   selector: 'app-header',
@@ -15,7 +17,11 @@ import { CommonModule } from '@angular/common';
 })
 export class HeaderComponent {
 
-  constructor(public authService:AuthService) {
+  constructor(public authService:AuthService, public router:Router) {
+  }
+
+  color(name:string){
+    return this.router.isActive(name, {paths: 'exact', queryParams: 'exact', fragment: 'ignored', matrixParams: 'ignored'}) ? "accent" : "primary"
   }
 
 }
