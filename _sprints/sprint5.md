@@ -387,10 +387,18 @@ imports: [MatButton, MatFormField, CommonModule, MatLabel, FormsModule, MatIcon,
 # Валидация в формах Angular
 
 
-
 # Входные и выходные параметры
 
-
-
-
 # Interceptors
+
+# Маршруты по сегментам
+
+# Spinner loading
+
+# Пакет ngx-toastr
+
+# Guards
+
+```
+ng g guard auth --skip-tests
+```

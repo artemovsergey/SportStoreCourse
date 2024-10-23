@@ -13,7 +13,8 @@
         Регистрация 
     </button>
 
-    <button *ngIf="authService.currentUser$ | async" mat-flat-button [routerLink] = "['/users']" [color]="color('users')">
+    <!-- *ngIf="authService.currentUser$ | async" -->
+    <button    mat-flat-button routerLink = '/users' [color]="color('users')">
         <mat-icon>
             people
         </mat-icon>

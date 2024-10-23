@@ -15,7 +15,9 @@ export class AuthService {
   currentUser$ = this.currentUserSource.asObservable();
   router: Router = new Router()
 
-  constructor(private http:HttpClient) { }
+  constructor(private http:HttpClient) { 
+    this.currentUserSource.next(null!);
+  }
 
   login(model:any){
     
