@@ -10,6 +10,8 @@ import { Injectable } from '@angular/core';
 
 export class authGuard implements CanActivate{
 
+  // guard автоматически подписывается на Observable
+
   constructor(private authService: AuthService, private toast: ToastrService){ 
   }
 
@@ -25,6 +27,7 @@ export class authGuard implements CanActivate{
         this.toast.success("Авторизация успешна");
         return true;
       })
+
     );
   }
 }
