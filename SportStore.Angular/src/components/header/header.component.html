@@ -1,17 +1,19 @@
 <mat-toolbar color="primary">
-    <button mat-button [routerLink] = "['/']">
+    <button mat-flat-button [routerLink] = "['']" [color]="color('')"  >
         <mat-icon>
             home
         </mat-icon>
         Home
     </button>
 
-    <button *ngIf="(authService.currentUser$ | async) == null" mat-button [routerLink] = "['/sign']">
+
+
+    <button *ngIf="(authService.currentUser$ | async) == null" mat-flat-button routerLink = '/sign' [color]="color('sign')" >
         <mat-icon>login</mat-icon>
         Регистрация 
     </button>
 
-    <button *ngIf="authService.currentUser$ | async" mat-button [routerLink] = "['/users']">
+    <button *ngIf="authService.currentUser$ | async" mat-flat-button [routerLink] = "['/users']" [color]="color('users')">
         <mat-icon>
             people
         </mat-icon>
