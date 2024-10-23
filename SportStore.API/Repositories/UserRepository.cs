@@ -51,7 +51,8 @@ public class UserRepository : IUserRepository
 
     public User FindUserById(int id)
     {
-        throw new NotImplementedException();
+        var user = _db.Users.Where(u => u.Id == id).FirstOrDefault<User>();
+       return  user != null ? user : throw new Exception($"Пользователь c id = {id} не найден"); 
     }
 
     public List<User> GetUsers()
