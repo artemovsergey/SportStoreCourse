@@ -61,13 +61,11 @@ public class UsersController : ControllerBase
         return Ok(_repo.GetUsers());
     }
 
-
     [HttpPut]
     public ActionResult UpdateUser(User user)
     {
         return Ok(_repo.EditUser(user, user.Id));
     }
-
 
     [HttpGet("{id}")]
     public ActionResult GetUserById(int id)
@@ -75,13 +73,11 @@ public class UsersController : ControllerBase
         return Ok(_repo.FindUserById(id));
     }
 
-
     [HttpDelete]
     public ActionResult DeleteUser(int id)
     {
         return Ok(_repo.DeleteUser(id));
     }
-
 
     /// <summary>
     /// 
@@ -101,7 +97,6 @@ public class UsersController : ControllerBase
         }
     }
 
-
     /// <summary>
     /// Метод проверки пароля
     /// </summary>
@@ -110,7 +105,6 @@ public class UsersController : ControllerBase
     /// <returns></returns>    
     private ActionResult CheckPasswordHash(UserDto userDto, User user)
     {
-
         using var hmac = new HMACSHA256(user.PasswordSalt);
         var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(userDto.Password));
 
@@ -124,6 +118,11 @@ public class UsersController : ControllerBase
 
         return Ok(user);
 
+    }
+
+    [HttpGet("{code:int}")]
+    public ActionResult GetError([FromRoute]int code){
+        return StatusCode(code);
     }
 
 

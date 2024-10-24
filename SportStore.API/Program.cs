@@ -1,6 +1,7 @@
 using SportStore.API.Data;
 using SportStore.API.Extensions;
 using SportStore.API.Interfaces;
+using SportStore.API.Middleware;
 using SportStore.API.Repositories;
 using SportStore.API.Services;
 
@@ -18,6 +19,8 @@ builder.Services.AddJwtServices(builder.Configuration);
 
 
 var app = builder.Build();
+
+app.UseMiddleware<ExceptionHandlerMiddleware>();
 
 app.UseSwagger();
 app.UseSwaggerUI();

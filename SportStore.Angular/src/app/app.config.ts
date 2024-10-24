@@ -2,9 +2,10 @@ import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptors, withInterceptorsFromDi } from '@angular/common/http';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideToastr } from 'ngx-toastr';
+import { errorInterceptor } from '../_interceptors/error.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -12,7 +13,11 @@ export const appConfig: ApplicationConfig = {
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
     provideToastr(),
-    provideHttpClient(withInterceptorsFromDi()), provideAnimationsAsync(), provideAnimationsAsync()
+    provideHttpClient(
+      withInterceptors([errorInterceptor]),
+    ),
+    provideAnimationsAsync(), 
+    provideAnimationsAsync()
 
   ]
 };
