@@ -402,3 +402,24 @@ imports: [MatButton, MatFormField, CommonModule, MatLabel, FormsModule, MatIcon,
 ```
 ng g guard auth --skip-tests
 ```
+
+# HttpParams
+
+# HttpHeaders
+
+```ts
+    postData(user: User){     
+        const myHeaders = new HttpHeaders().set("Accept", "application/json");
+        return this.http.post("http://localhost:3000/postuser", user, {headers:myHeaders}); 
+    }
+```
+
+# query params
+
+```html
+  <a routerLink="/item/5" [queryParams]="{>product':'phone', 'price': 200}">Item 5</a>
+```
+
+# CanDeactivate на форме регистрации
+
+```canActivate``` проверяет возможность перехода на определенный компонент, а ```сanDeactivate``` проверяет возможность ухода с определенного компонента

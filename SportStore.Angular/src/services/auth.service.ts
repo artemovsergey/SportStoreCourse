@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import User from '../models/user';
-import { map, ReplaySubject } from 'rxjs';
+import { catchError, map, ReplaySubject } from 'rxjs';
 import { Router } from '@angular/router';
 
 @Injectable({
@@ -10,7 +10,8 @@ import { Router } from '@angular/router';
 export class AuthService {
 
   baseUrl:String = "http://localhost:5295/"
-
+  errorMessage: String = "";
+  
   private currentUserSource = new ReplaySubject<User>(1);
   currentUser$ = this.currentUserSource.asObservable();
   router: Router = new Router()
@@ -33,6 +34,13 @@ export class AuthService {
           console.log(response)
         }
       })
+      ,
+      catchError(err => {  
+        console.log(err); 
+        this.errorMessage = err.message;
+        return [];
+      })
+
     )
   }
 

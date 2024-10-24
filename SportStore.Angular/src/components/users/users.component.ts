@@ -11,24 +11,24 @@ import { UserComponent } from "../user/user.component";
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
+import { UsercardComponent } from "../usercard/usercard.component";
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-users',
   standalone: true,
-  imports: [CommonModule, MatSelectModule, MatInputModule,MatTableModule, MatCardModule, MatButtonModule, MatListModule, UserComponent, MatFormFieldModule],
+  imports: [CommonModule, MatSelectModule, MatInputModule, MatTableModule, MatCardModule, MatButtonModule, MatListModule, UserComponent, MatFormFieldModule, UsercardComponent, MatProgressSpinnerModule],
   templateUrl: './users.component.html',
   styleUrl: './users.component.scss'
 })
 export class UsersComponent {
 
   users$: Observable<User[]> = new Observable
-
   users: User[] = []
-  
   displayedColumns: string[] = ['id','login','name'];
-  
   title: string = "Пользователи"
   viewMode: String = "Таблица"
+  loading: boolean = true;
 
   constructor(private userService:UsersService) { }
 
@@ -37,8 +37,8 @@ export class UsersComponent {
     this.getUsers()
   }
 
-  public getUsers(){
-    this.userService.getUsers().subscribe(r => this.users = r)
+  getUsers(){
+    this.userService.getUsers().subscribe(r => { this.loading = false; this.users = r})
   }
 
   showCurrentUser(user:User) {

@@ -1,8 +1,10 @@
+<div class="users" *ngIf="loading">
+  <div class="users"><h1>Загрузка</h1></div>
+  <mat-spinner></mat-spinner>
+</div>
 
 
-
-<div class="users">
-
+<div class="users" *ngIf="!loading" >
   <mat-form-field>
     <mat-label>Режим отображения</mat-label>
     <mat-select [(value)] = "viewMode">
@@ -39,7 +41,7 @@
 <div *ngIf="(viewMode == 'Карточки') == true" class="users"> 
 
   <mat-list role="list"  *ngFor="let u of users">
-      <app-user [u] = "u" (currentUserState)="showCurrentUser($event)"/>
+      <app-usercard [user]="u" (currentUserState)="showCurrentUser($event)"   />
   </mat-list>
   
 </div>

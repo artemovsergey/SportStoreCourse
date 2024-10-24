@@ -1,6 +1,7 @@
 {
   "name": "sport-store.angular",
-  "version": "0.0.0",
+  "version": "1.0.0",
+  "author": "asv",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
