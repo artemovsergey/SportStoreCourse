@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {MatTableModule} from '@angular/material/table';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-home',
@@ -11,5 +12,9 @@ import {MatTableModule} from '@angular/material/table';
 })
 
 export class HomeComponent {
-  title:string = "Добро пожаловать в Home"
+
+  constructor(public authService:AuthService){
+
+  }
+  
 }

@@ -423,3 +423,15 @@ ng g guard auth --skip-tests
 # CanDeactivate на форме регистрации
 
 ```canActivate``` проверяет возможность перехода на определенный компонент, а ```сanDeactivate``` проверяет возможность ухода с определенного компонента
+
+
+# Bootwatch
+
+- https://bootswatch.com/
+
+- npm install bootwatch
+
+
+# Shared Module
+
+```ng g m shared --flat```

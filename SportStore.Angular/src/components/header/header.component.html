@@ -1,4 +1,4 @@
-<mat-toolbar color="primary">
+<mat-toolbar color="primary" >
     <button mat-flat-button [routerLink] = "['']" [color]="color('')"  >
         <mat-icon>
             home
@@ -6,11 +6,9 @@
         Home
     </button>
 
-
-
-    <button *ngIf="(authService.currentUser$ | async) == null" mat-flat-button routerLink = '/sign' [color]="color('sign')" >
+    <button *ngIf="(authService.currentUser$ | async) == null" mat-flat-button routerLink = '/auth' [color]="color('auth')" >
         <mat-icon>login</mat-icon>
-        Регистрация 
+        Авторизация 
     </button>
 
     <!-- *ngIf="authService.currentUser$ | async" -->
@@ -27,5 +25,12 @@
         </mat-icon>
         Выход
     </button>    
+
+    <!-- @if((authService.currentUser$ | async)){
+        <h1> {{(authService.currentUser$ | async)!.login }} </h1>
+    } -->
+
+    <h1 *ngIf="(authService.currentUser$ | async) as user">{{user.login | titlecase }}  </h1>
+    
 
 </mat-toolbar>

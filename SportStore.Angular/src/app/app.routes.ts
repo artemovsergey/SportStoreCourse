@@ -8,14 +8,23 @@ import { UserComponent } from '../components/user/user.component';
 import { authGuard } from '../guards/auth.guard';
 
 export const routes: Routes = [
-    { path: 'header', component: HeaderComponent },
+
+    { path: '', component: HomeComponent },
+
+    {
+        path:'',
+        runGuardsAndResolvers:"always",
+        canActivate:[authGuard],
+        children:[
+            { path: 'header', component: HeaderComponent },
+
+            { path: 'users', component: UsersComponent },
+            { path: 'users/:id', component: UserComponent },
+        ]
+    },
+
     { path: 'auth', component: AuthComponent },
     { path: 'sign', component: SignComponent },
-    { path: 'users', component: UsersComponent, canActivate:[authGuard] },
-
-    { path: 'users/:id', component: UserComponent },
-
-    { path: 'home', component: HomeComponent },
-    { path: '', component: HomeComponent },
     { path: "**", component: HomeComponent, pathMatch: 'full'}
+
 ];

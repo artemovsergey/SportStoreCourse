@@ -19,7 +19,7 @@ export class authGuard implements CanActivate{
 
     return this.authService.currentUser$.pipe(
       map(user => {
-        if (user) {
+        if (!user) {
           this.toast.error("Пользователь не авторизован");
           return false;
         }

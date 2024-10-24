@@ -13,11 +13,12 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { UsercardComponent } from "../usercard/usercard.component";
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { SportStoreModule } from '../../_modules/sport-store.module';
 
 @Component({
   selector: 'app-users',
   standalone: true,
-  imports: [CommonModule, MatSelectModule, MatInputModule, MatTableModule, MatCardModule, MatButtonModule, MatListModule, UserComponent, MatFormFieldModule, UsercardComponent, MatProgressSpinnerModule],
+  imports: [SportStoreModule],
   templateUrl: './users.component.html',
   styleUrl: './users.component.scss'
 })
