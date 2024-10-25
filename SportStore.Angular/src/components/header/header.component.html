@@ -32,20 +32,23 @@
 
     <h1 *ngIf="(authService.currentUser$ | async) as user">{{user.login | titlecase }}  </h1>
     
-    <button (click)="get401Error(400)">
-        400
-    </button>
+   <div hidden >
+        <button (click)="get401Error(400)">
+            400
+        </button>
+    
+        <button (click)="get401Error(401)">
+            401
+        </button>
+    
+        <button (click)="get401Error(404)">
+            404
+        </button>
+    
+        <button (click)="get401Error(500)">
+            500
+        </button>
+    </div>
 
-    <button (click)="get401Error(401)">
-        401
-    </button>
-
-    <button (click)="get401Error(404)">
-        404
-    </button>
-
-    <button (click)="get401Error(500)">
-        500
-    </button>
 
 </mat-toolbar>

@@ -6,6 +6,8 @@ import { AuthComponent } from '../components/auth/auth.component';
 import { SignComponent } from '../components/sign/sign.component';
 import { UserComponent } from '../components/user/user.component';
 import { authGuard } from '../guards/auth.guard';
+import { NotFountComponent } from '../components/errors/not-fount/not-fount.component';
+import { ErrorServerComponent } from '../components/errors/error-server/error-server.component';
 
 export const routes: Routes = [
 
@@ -24,7 +26,9 @@ export const routes: Routes = [
     },
 
     { path: 'auth', component: AuthComponent },
+    { path: 'not-found', component: NotFountComponent },
+    { path: 'error-server', component: ErrorServerComponent },
     { path: 'sign', component: SignComponent },
-    { path: "**", component: HomeComponent, pathMatch: 'full'}
+    { path: "**", component: NotFountComponent, pathMatch: 'full'}
 
 ];

@@ -1,5 +1,6 @@
 using System.Security.Cryptography;
 using System.Text;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SportStore.API.Dto;
 using SportStore.API.Entities;
@@ -9,7 +10,7 @@ using SportStore.API.Validations;
 namespace SportStore.API.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
 public class UsersController : ControllerBase
 {
     private readonly IUserRepository _repo;
@@ -54,7 +55,7 @@ public class UsersController : ControllerBase
         return Ok(_repo.CreateUser(user));
     }
 
-    // [Authorize]
+    [Authorize]
     [HttpGet]
     public ActionResult GetUsers()
     {
@@ -93,7 +94,7 @@ public class UsersController : ControllerBase
         var result = validator.Validate(user);
         if (!result.IsValid)
         {
-            throw new Exception($"{result.Errors.First().ErrorMessage}");
+            throw new BadHttpRequestException($"{result.Errors.First().ErrorMessage}");
         }
     }
 
@@ -122,6 +123,12 @@ public class UsersController : ControllerBase
 
     [HttpGet("{code:int}")]
     public ActionResult GetError([FromRoute]int code){
+
+        if(code == 500){
+           int a = 1;
+           return Ok(a/0);
+        }
+
         return StatusCode(code);
     }
 

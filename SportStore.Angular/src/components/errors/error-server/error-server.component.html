@@ -1,0 +1,13 @@
+<h1 style ="margin-top: 10px;"> Внутренняя ошибка сервера</h1>
+
+<ng-container *ngIf="error">
+    <h5 class="text-danger"> Error: {{error.message}}</h5>
+    <p class="font-weight-bold"> Если вы видите это, значит дело не в Angular</p>
+    <ol>
+        <li> Откройте инструменты Chrome</li>
+        <li> Откройте вкладку Сеть и проверьте запрос </li>
+        <li> Проверьте запрос в Postman </li>
+    </ol>
+    <p> Stack Trace:</p>
+    <code class="mt-5" style="background-color:whitesmoke;">{{error.detail}}</code>
+</ng-container>

@@ -12,11 +12,14 @@ export const appConfig: ApplicationConfig = {
 
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
-    provideToastr(),
+    provideToastr({
+      timeOut: 10000,
+      positionClass: 'toast-bottom-right',
+      preventDuplicates: true,
+    }), 
     provideHttpClient(
       withInterceptors([errorInterceptor]),
     ),
-    provideAnimationsAsync(), 
     provideAnimationsAsync()
 
   ]

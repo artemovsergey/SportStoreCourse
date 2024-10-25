@@ -51,10 +51,11 @@ public class ExceptionHandlerMiddleware
             //     httpStatusCode = HttpStatusCode.BadRequest;
             //     result = JsonSerializer.Serialize(validateException.ValidationErrors);
             //     break;
-            // case BadRequestException badRequestException:
-            //     httpStatusCode = HttpStatusCode.BadRequest;
-            //     result = badRequestException.Message;
-            //     break;
+            case BadHttpRequestException badRequestException:
+                httpStatusCode = HttpStatusCode.BadRequest;
+                message = badRequestException.Message;
+                messagedetail = badRequestException.StackTrace?.ToString();
+                break;
             // case NotFoundException:
             //     httpStatusCode = HttpStatusCode.NotFound;
             //     break;
@@ -64,7 +65,7 @@ public class ExceptionHandlerMiddleware
                 messagedetail = sqlEx.StackTrace?.ToString();
                 break;
             case Exception ex:
-                httpStatusCode = HttpStatusCode.BadRequest;
+                httpStatusCode = HttpStatusCode.InternalServerError;
                 message = ex.Message;
                 messagedetail = ex.StackTrace?.ToString();
                 break;

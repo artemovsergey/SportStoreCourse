@@ -8,6 +8,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatButton } from '@angular/material/button';
 import { ToastrService } from 'ngx-toastr';
+import User from '../../models/user';
 
 
 @Component({
@@ -27,8 +28,8 @@ export class SignComponent {
   sign(){
     this.authService.register(this.model).subscribe({next: r => {console.log(r);
                                                      this.router.navigate(["auth"]);
-                                                     this.toast.success(`Пользователь ${r} зарегистрирован`,"Сообщение")},                                                
-                                                      error: e => {console.log(e.error); this.toast.error(e)}})
+                                                     this.toast.success(`Пользователь ${(r as User).login} зарегистрирован`,"Сообщение")},                                                
+                                                     })
   }
 
 }

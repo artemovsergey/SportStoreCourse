@@ -3,14 +3,15 @@ import { Injectable } from '@angular/core';
 import User from '../models/user';
 import { catchError, map, ReplaySubject } from 'rxjs';
 import { Router } from '@angular/router';
+import { enviroment } from '../enviroments/enviroments';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
-  baseUrl:String = "http://localhost:5295/"
-  errorMessage: String = "";
+  baseUrl = enviroment.baseUrl
+  errorMessage = "";
   
   private currentUserSource = new ReplaySubject<User>(1);
   currentUser$ = this.currentUserSource.asObservable();

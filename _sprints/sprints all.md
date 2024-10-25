@@ -22,6 +22,34 @@
 
 
 
+# Ресурсы
+
+- https://json-generator.com/
+
+
+# Repository
+
+```Csharp
+public async Task<bool> SaveAllAsync(){
+    return await db.SaveChangesAsync() > 0
+}
+
+public async Task Update(User user){
+    return await db.Entry(user).State = EntityState.Modified
+}
+```
+
+# AutoMapper with Repository
+
+```Csharp
+return await _db.Users.Where(u => u.name = name)
+                      .ProjectTo<UserDto>(_mapper.ConfigurationProvider)
+                      .SingleOrDefaultAsync();
+```
+
+
+
+
 # .NET
 
 ```dotnet new sln```
@@ -243,10 +271,6 @@ Implement basic authentication in our app and have an understanding of:
 5. Использование структурных директив Angular для условного отображения элементов на странице
 6. Связь компонентов от родительского к дочернему
 7. Связь компонентов от дочернего компонента к родительскому
-
-- компонент header
-- выбор css фреймворка (Bootstrap, Tailwind, Angular Material)
-50
 
 # Sprint 5
 

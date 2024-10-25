@@ -23,12 +23,11 @@ export class AuthComponent {
   }
 
   login(){
-    this.authService.login(this.model).subscribe({next: r => {console.log(r); this.router.navigate(["home"])}, error: e => console.log(e)})
+    this.authService.login(this.model).subscribe({next: r => {console.log(r); this.router.navigate([""])}, error: e => console.log(e)})
   }
 
   sign(){
-    this.authService.register(this.model).subscribe({next: r => console.log(r), 
-                                                     error: e => console.log(e.error)})
+    this.authService.register(this.model).subscribe({next: r => console.log(r)})
   }
 
   logout(){
