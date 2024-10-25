@@ -1,10 +1,10 @@
-<div class="users" *ngIf="loading">
+<div class="users" *ngIf="loading;else main">
   <div class="users"><h1>Загрузка</h1></div>
   <mat-spinner></mat-spinner>
 </div>
 
 
-<div class="users" *ngIf="!loading" >
+<ng-template #main >
   <mat-form-field>
     <mat-label>Режим отображения</mat-label>
     <mat-select [(value)] = "viewMode">
@@ -36,7 +36,7 @@
       <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
     </table>
 
-</div>
+</ng-template>
 
 <div *ngIf="(viewMode == 'Карточки') == true" class="users"> 
 
