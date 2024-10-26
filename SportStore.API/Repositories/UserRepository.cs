@@ -1,6 +1,9 @@
 using System.Data.SqlTypes;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using SportStore.API.Data;
 using SportStore.API.Entities;
+using SportStore.API.Exceptions;
 using SportStore.API.Interfaces;
 
 namespace SportStore.API.Repositories;
@@ -46,13 +49,13 @@ public class UserRepository : IUserRepository
     public User FindUser(string login)
     {
        var user = _db.Users.Where(u => u.Login == login).FirstOrDefault<User>();
-       return  user != null ? user : throw new Exception("Пользователь не найден"); 
+       return  user != null ? user : throw new NotFoundException("Пользователь не найден"); 
     }
 
     public User FindUserById(int id)
     {
         var user = _db.Users.Where(u => u.Id == id).FirstOrDefault<User>();
-       return  user != null ? user : throw new Exception($"Пользователь c id = {id} не найден"); 
+       return  user != null ? user : throw new NotFoundException($"Пользователь c id = {id} не найден"); 
     }
 
     public List<User> GetUsers()

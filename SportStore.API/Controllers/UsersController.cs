@@ -45,14 +45,15 @@ public class UsersController : ControllerBase
             Login = userDto.Login,
             PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(userDto.Password)),
             PasswordSalt = hmac.Key,
-            Token = _tokenService.CreateToken(userDto.Login)
+            Token = _tokenService.CreateToken(userDto.Login),
+            Photo = userDto.Photo ?? ""
         };
 
         // проверка валидатором объекта user
         ValidUser(user);
 
         // сохранение пользователя
-        return Ok(_repo.CreateUser(user));
+        return Created(" ", _repo.CreateUser(user));
     }
 
     [Authorize]
@@ -121,7 +122,7 @@ public class UsersController : ControllerBase
 
     }
 
-    [HttpGet("{code:int}")]
+    [HttpGet("error/{code:int}")]
     public ActionResult GetError([FromRoute]int code){
 
         if(code == 500){

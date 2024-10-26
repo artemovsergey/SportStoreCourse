@@ -18,13 +18,13 @@ export const routes: Routes = [
         runGuardsAndResolvers:"always",
         canActivate:[authGuard],
         children:[
-            { path: 'header', component: HeaderComponent },
-
             { path: 'users', component: UsersComponent },
-            { path: 'users/:id', component: UserComponent },
+            // { path: 'users/:id', component: UserComponent },
         ]
     },
 
+   
+    { path: 'users/:id', component: UserComponent },
     { path: 'auth', component: AuthComponent },
     { path: 'not-found', component: NotFountComponent },
     { path: 'error-server', component: ErrorServerComponent },

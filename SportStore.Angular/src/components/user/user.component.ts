@@ -6,6 +6,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { enviroment } from '../../enviroments/enviroments';
 
 @Component({
   selector: 'app-user',
@@ -23,11 +24,11 @@ export class UserComponent implements OnInit {
   id: number
   currentUser: any = {}
   currentUser$: Observable<User> = new Observable()
+  url:string = enviroment.baseUrl
 
   constructor(private activateRoute: ActivatedRoute, private http: HttpClient) {
     this.id = activateRoute.snapshot.params["id"];
     console.log("id = " + this.id)
-    this.currentUser$ = this.http.get<User>("http://localhost:5295/Users/" + this.id)
   }
 
   ngOnInit() {
@@ -35,7 +36,7 @@ export class UserComponent implements OnInit {
   }
 
   getUserById() {
-    this.http.get<User>("http://localhost:5295/Users/" + this.id).subscribe(r => { this.currentUser = r; console.log(this.currentUser) })
+    this.http.get<User>(this.url + "Users/" + this.id).subscribe(r => { this.currentUser = r; console.log(this.currentUser) })
   }
 
   giveUserUp(user: User) {

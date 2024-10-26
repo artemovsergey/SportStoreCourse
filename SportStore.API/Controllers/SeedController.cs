@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using SportStore.API.Data;
 using SportStore.API.Dto;
 using SportStore.API.Entities;
+using SportStore.API.Interfaces;
 
 namespace SportStore.API.Controllers;
 
@@ -13,9 +14,12 @@ namespace SportStore.API.Controllers;
 public class SeedController : ControllerBase
 {
     private readonly SportStoreContext _db;
-    public SeedController(SportStoreContext db)
+    private readonly ITokenService _tokenService;
+
+    public SeedController(SportStoreContext db, ITokenService tokenService)
     {
        _db = db;
+       _tokenService = tokenService;
     }
 
     [HttpGet("generate")]
@@ -27,7 +31,7 @@ public class SeedController : ControllerBase
         Faker<UserRecordDto> _faker = new Faker<UserRecordDto>("en")
             .RuleFor(u => u.Login, f => GenerateLogin(f).Trim())
             .RuleFor(u => u.Password, f => GeneratePassword(f).Trim().Replace(" ", ""));
-
+            
 
         string GenerateLogin(Faker faker)
         {
@@ -52,7 +56,9 @@ public class SeedController : ControllerBase
                 {
                     Login = user.Login,
                     PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(user.Password)),
-                    PasswordSalt = hmac.Key
+                    PasswordSalt = hmac.Key,
+                    Photo = $"https://randomuser.me/api/portraits/women/{new Random().Next(1,100) }.jpg",
+                    Token = _tokenService.CreateToken(user.Login)
                     
                 };
 

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using SportStore.API.Data;
@@ -11,9 +12,11 @@ using SportStore.API.Data;
 namespace SportStore.API.Migrations
 {
     [DbContext(typeof(SportStoreContext))]
-    partial class SportStoreContextModelSnapshot : ModelSnapshot
+    [Migration("20241026065107_AddPhotoToUsers")]
+    partial class AddPhotoToUsers
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

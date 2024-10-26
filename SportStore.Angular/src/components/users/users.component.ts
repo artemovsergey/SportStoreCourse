@@ -18,7 +18,7 @@ import { SportStoreModule } from '../../_modules/sport-store.module';
 @Component({
   selector: 'app-users',
   standalone: true,
-  imports: [SportStoreModule],
+  imports: [SportStoreModule, UsercardComponent],
   templateUrl: './users.component.html',
   styleUrl: './users.component.scss'
 })
@@ -26,9 +26,9 @@ export class UsersComponent {
 
   users$: Observable<User[]> = new Observable
   users: User[] = []
-  displayedColumns: string[] = ['id','login','name'];
+  displayedColumns: string[] = ['photo','id','login','name'];
   title: string = "Пользователи"
-  viewMode: String = "Таблица"
+  viewMode: String = "Карточки"
   loading: boolean = true;
 
   constructor(private userService:UsersService) { }
@@ -42,7 +42,7 @@ export class UsersComponent {
     this.userService.getUsers().subscribe(r => { this.loading = false; this.users = r})
   }
 
-  showCurrentUser(user:User) {
+  showCurrentUser(user: User) {
     console.log(user)
   }
 

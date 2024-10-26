@@ -7,6 +7,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.Extensions.Hosting;
+using SportStore.API.Exceptions;
 using SportStore.API.Response;
 
 namespace SportStore.API.Middleware;
@@ -47,18 +48,21 @@ public class ExceptionHandlerMiddleware
         var messagedetail = string.Empty;
 
         switch(exception){
-            // case SportStore.Application.Exceptions.ValidationException validateException:
-            //     httpStatusCode = HttpStatusCode.BadRequest;
-            //     result = JsonSerializer.Serialize(validateException.ValidationErrors);
-            //     break;
+            case Npgsql.PostgresException ex:
+                httpStatusCode = HttpStatusCode.InternalServerError;
+                message = ex.Message;
+                messagedetail = ex.StackTrace?.ToString();
+                break;
             case BadHttpRequestException badRequestException:
                 httpStatusCode = HttpStatusCode.BadRequest;
                 message = badRequestException.Message;
                 messagedetail = badRequestException.StackTrace?.ToString();
                 break;
-            // case NotFoundException:
-            //     httpStatusCode = HttpStatusCode.NotFound;
-            //     break;
+            case NotFoundException ex:
+                httpStatusCode = HttpStatusCode.NotFound;
+                message = ex.Message;
+                messagedetail = ex.StackTrace?.ToString();
+                break;
             case SqlTypeException sqlEx: 
                 httpStatusCode = HttpStatusCode.BadRequest;
                 message = sqlEx.Message;

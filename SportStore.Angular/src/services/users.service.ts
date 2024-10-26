@@ -10,23 +10,22 @@ import { enviroment } from '../enviroments/enviroments';
 })
 export class UsersService {
 
-   token: string = localStorage.getItem('user') ?
-            JSON.parse(localStorage.getItem('user')!).token
-            : "token"
+  //  token: string = localStorage.getItem('user') ?
+  //           JSON.parse(localStorage.getItem('user')!).token
+  //           : "token"
 
-   httpOptions = {
-    headers: new HttpHeaders({
-      Authorization:'Bearer ' + this.token
-    })
-  } 
-
+  //  httpOptions = {
+  //   headers: new HttpHeaders({
+  //     Authorization:'Bearer ' + this.token
+  //   })
+  // } 
 
   constructor(private http:HttpClient) {
   }
   
   getUsers(): Observable<User[]> {
     const url = enviroment.baseUrl
-    return this.http.get<User[]>(url + 'Users', this.httpOptions)
+    return this.http.get<User[]>(url + 'Users') //this.httpOptions
   }
 
 }

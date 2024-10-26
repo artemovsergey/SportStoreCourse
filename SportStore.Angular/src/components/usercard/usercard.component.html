@@ -1,6 +1,44 @@
-<mat-card appearance="outlined" (click)="giveUserUp(user)">
-    <mat-card-header>
-      <mat-card-title> UserId: {{user.id}}</mat-card-title>
-      <mat-card-subtitle>Login: {{user.login}}</mat-card-subtitle>
-    </mat-card-header>
+<mat-card class="user-card" appearance="outlined">
+  
+  <mat-card-header>
+
+    <div class="user-image-wrapper" >
+      
+      <div class="user-icon">
+        <button class="animate" mat-flat-button color="accent">like</button>
+      </div>
+
+      <img mat-card-image src="{{user.photo ||'logo.png'}}" alt="{{user.login}}" (click)="giveUserUp(user)">
+
+      
+      
+
+    </div>
+    
+    
+    <mat-card-title>{{user.id}}</mat-card-title>
+
+    <mat-card-subtitle>{{user.login}}</mat-card-subtitle>
+
+  </mat-card-header>
+ 
+  <mat-card-content>
+    <p>
+      Информация по пользователе {{user.login}}
+    </p>
+  
+  </mat-card-content>
+
+  <mat-card-actions>
+    <p>
+      <button mat-flat-button color="primary" routerLink="/users/{{user.id}}">Профиль</button>
+    </p>
+   <p>
+    <button  mat-flat-button color="accent">Удалить</button>
+   </p>
+
+  </mat-card-actions>
+
 </mat-card>
+
+

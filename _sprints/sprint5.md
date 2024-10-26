@@ -435,3 +435,9 @@ ng g guard auth --skip-tests
 # Shared Module
 
 ```ng g m shared --flat```
+
+
+# Задание
+
+- обработать исключение ```Npgsql.PostgresException```, которое вылетает когда база данных не создана.
+- обработать исключение соединения с сервером

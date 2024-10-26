@@ -9,15 +9,15 @@ namespace SportStore.API.Entities;
 public class User : Base
 {
 
-    public string Name { get; set; } = string.Empty;
-
     [MinLength(5, ErrorMessage = "Минимальное длина имени 5")]
     [SportStore.API.Validations.MaxLength(10)]
     public string Login { get; set; } = string.Empty;
 
     public required byte[] PasswordHash { get; set; }
     public required byte[] PasswordSalt { get; set; }
-
     public string Token {get; set;} = string.Empty;
+    public string Name { get; set; } = string.Empty;
+    
+    public string Photo {get; set;} = string .Empty;
 
 }

@@ -27,6 +27,6 @@ app.UseSwaggerUI();
 // app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseCors(o => o.AllowAnyOrigin().AllowAnyHeader());
+app.UseCors(o => o.AllowAnyHeader().WithOrigins("http://localhost:4200"));
 app.MapControllers();
 app.Run();

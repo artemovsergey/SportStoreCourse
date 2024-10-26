@@ -12,6 +12,7 @@ public class UserDto
     [SportStore.API.Validations.MaxLength(10)]
     public string Login { get; set; } = string.Empty;
     public string Password { get; set; } = string.Empty;
+    public string? Photo {get; set;}
 }
 
 public record UserRecordDto {
@@ -20,5 +21,6 @@ public record UserRecordDto {
     [SportStore.API.Validations.MaxLength(10)]
     public required string Login {get; init;}
     public required string Password {get; init;}
+    public string? Photo {get; set;}
 
 };
