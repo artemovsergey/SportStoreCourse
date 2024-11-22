@@ -8,11 +8,13 @@ import { CommonModule } from '@angular/common';
 import { MatChipOption } from '@angular/material/chips';
 import { HttpClient } from '@angular/common/http';
 
+import {MatMenuModule} from '@angular/material/menu';
+
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [CommonModule, MatIconModule, MatToolbarModule, MatButtonModule, RouterLink],
+  imports: [CommonModule, MatIconModule, MatToolbarModule, MatButtonModule, RouterLink, MatMenuModule],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
 })
@@ -26,7 +28,7 @@ export class HeaderComponent {
     return this.router.isActive(name, {paths: 'exact', queryParams: 'exact', fragment: 'ignored', matrixParams: 'ignored'}) ? "accent" : "primary"
   }
 
-  get401Error(code:number) { 
+  get401Error(code:number) {
     this.http.get("http://localhost:5295/Users/" + code).subscribe(r => console.log(r), e => console.log(e))
   }
 

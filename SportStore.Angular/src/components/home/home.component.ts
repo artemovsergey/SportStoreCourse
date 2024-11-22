@@ -13,6 +13,8 @@ import { AuthService } from '../../services/auth.service';
 
 export class HomeComponent {
 
+  title:String = ""
+
   constructor(public authService:AuthService){
 
   }

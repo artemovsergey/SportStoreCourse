@@ -8,7 +8,7 @@
 
     <button *ngIf="(authService.currentUser$ | async) == null" mat-flat-button routerLink = '/auth' [color]="color('auth')" >
         <mat-icon>login</mat-icon>
-        Авторизация 
+        Авторизация
     </button>
 
     <!-- *ngIf="authService.currentUser$ | async" -->
@@ -19,32 +19,49 @@
         Пользователи
     </button>
 
-    <button *ngIf="authService.currentUser$ | async" mat-button type="button" (click)="authService.logout()">
-        <mat-icon>
-          logout
-        </mat-icon>
-        Выход
-    </button>    
+<!--    <button *ngIf="authService.currentUser$ | async" mat-button type="button" (click)="authService.logout()">-->
+<!--        <mat-icon>-->
+<!--          logout-->
+<!--        </mat-icon>-->
+<!--        Выход-->
+<!--    </button>-->
 
     <!-- @if((authService.currentUser$ | async)){
         <h1> {{(authService.currentUser$ | async)!.login }} </h1>
     } -->
 
-    <h1 *ngIf="(authService.currentUser$ | async) as user">{{user.login | titlecase }}  </h1>
-    
+  <div *ngIf="(authService.currentUser$ | async) as user">
+    <button mat-button [matMenuTriggerFor]="menu">{{user.login}}</button>
+    <mat-menu #menu="matMenu">
+      <button routerLink="/profile" mat-menu-item>Профиль</button>
+      <button routerLink="/user/edit" mat-menu-item>Обновить</button>
+      <button mat-menu-item (click)="authService.logout()">
+
+        <mat-icon>
+          logout
+        </mat-icon>
+
+        Выход
+
+      </button>
+    </mat-menu>
+  </div>
+
+
+
    <div hidden >
         <button (click)="get401Error(400)">
             400
         </button>
-    
+
         <button (click)="get401Error(401)">
             401
         </button>
-    
+
         <button (click)="get401Error(404)">
             404
         </button>
-    
+
         <button (click)="get401Error(500)">
             500
         </button>

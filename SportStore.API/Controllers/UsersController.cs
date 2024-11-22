@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using Microsoft.AspNetCore.Authorization;
@@ -66,6 +67,9 @@ public class UsersController : ControllerBase
     [HttpPut]
     public ActionResult UpdateUser(User user)
     {
+        var username = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        
+        
         return Ok(_repo.EditUser(user, user.Id));
     }
 

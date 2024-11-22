@@ -1,0 +1,27 @@
+<h1 *ngIf="editForm.dirty"> Обновление </h1>
+
+
+<div class="auth">
+  <h1> Редактирование </h1>
+  <form #editForm="ngForm" id="editForm" (submit)="updateUser()" autocomplete="off" >
+    <p>
+      <mat-form-field>
+        <mat-label>Login</mat-label>
+        <input matInput name="login" type="text" [(ngModel)] = "user.login" name="login" autocomplete="off"  />
+      </mat-form-field>
+    </p>
+    <p>
+      <mat-form-field>
+        <mat-label>Password</mat-label>
+        <input matInput name="password" type="password" [(ngModel)] ="user.password" name="password" autocomplete="off" />
+      </mat-form-field>
+    </p>
+
+    <button mat-flat-button form="editForm" color="primary" type="submit" [disabled]="!editForm.dirty" >
+      <mat-icon>edit</mat-icon>
+       Обновить
+    </button>
+
+  </form>
+</div>
+
