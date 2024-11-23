@@ -68,7 +68,7 @@ public class UsersController : ControllerBase
     public ActionResult UpdateUser(User user)
     {
         var username = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        
+        Console.WriteLine($"username: {username}");
         
         return Ok(_repo.EditUser(user, user.Id));
     }

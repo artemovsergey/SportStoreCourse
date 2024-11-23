@@ -18,12 +18,20 @@ export class authGuard implements CanActivate{
 
   canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
 
+    const storedUser = JSON.parse(localStorage.getItem("user")!);
+    if (storedUser) {
+      this.authService.currentUserSource.next(storedUser);
+    }
+    else{
+      this.authService.currentUserSource.next(null!);
+    }
+
     return this.authService.currentUser$.pipe(
       map(user => {
         
         if (!user) {
           this.toast.error("Пользователь не авторизован");
-          this.router.navigate(["/auth"], { queryParams: { returnUrl: state.url } });
+          this.router.navigate(["/sign"], { queryParams: { returnUrl: state.url } });
           return false;
         }
         

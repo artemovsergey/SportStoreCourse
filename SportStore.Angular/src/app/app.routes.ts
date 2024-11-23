@@ -14,7 +14,6 @@ import { ProfileComponent } from '../components/profile/profile.component';
 
 export const routes: Routes = [
 
-    { path: '', component: HomeComponent },
 
     {
         path:'',
@@ -29,7 +28,7 @@ export const routes: Routes = [
     },
 
 
-    { path: 'users/:id', component: UserComponent },
+   
     { path: 'auth', component: AuthComponent },
     { path: 'not-found', component: NotFountComponent },
     { path: 'error-server', component: ErrorServerComponent },

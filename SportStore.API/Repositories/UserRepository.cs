@@ -43,7 +43,9 @@ public class UserRepository : IUserRepository
 
     public User EditUser(User user, int id)
     {
-        throw new NotImplementedException();
+        _db.Update(user);
+        _db.SaveChanges();
+        return user;
     }
 
     public User FindUser(string login)

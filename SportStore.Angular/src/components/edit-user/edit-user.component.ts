@@ -8,6 +8,7 @@ import {MatFormField, MatInputModule, MatLabel } from '@angular/material/input';
 import { MatIcon } from '@angular/material/icon';
 import { MatButton } from '@angular/material/button';
 import { ToastrService } from 'ngx-toastr';
+import { UsersService } from '../../services/users.service';
 
 @Component({
   selector: 'app-edit-user',
@@ -21,7 +22,9 @@ export class EditUserComponent {
   @ViewChild('editForm') editForm!: NgForm
 
   user!: User
-  constructor(private authService: AuthService, private toast:ToastrService) {
+  constructor(private authService: AuthService,
+    private toast: ToastrService,
+    private userService: UsersService) {
     this.authService.currentUser$.pipe(take(1)).subscribe(u => this.user = u)
   }
 
@@ -32,8 +35,9 @@ export class EditUserComponent {
   }
 
   updateUser(){
-    console.log(this.user)
+    this.userService.update(this.user).subscribe(r => console.log(r))
     this.toast.success("Пользователь обновлен!")
+    this.editForm.reset()
   }
 
 }

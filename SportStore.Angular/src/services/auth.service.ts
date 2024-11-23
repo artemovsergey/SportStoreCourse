@@ -13,7 +13,7 @@ export class AuthService {
   baseUrl = enviroment.baseUrl
   errorMessage = "";
   
-  private currentUserSource = new ReplaySubject<User>(1);
+  public currentUserSource = new ReplaySubject<User>(1);
   currentUser$ = this.currentUserSource.asObservable();
   router: Router = new Router()
 

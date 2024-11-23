@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+  import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import User from '../models/user'
 import { map, Observable, timeout } from 'rxjs';
@@ -26,6 +26,11 @@ export class UsersService {
   getUsers(): Observable<User[]> {
     const url = enviroment.baseUrl
     return this.http.get<User[]>(url + 'Users') //this.httpOptions
+  }
+
+  update(user:User){
+    const url = enviroment.baseUrl
+    return this.http.put<any>(url + 'Users', user) //this.httpOptions
   }
 
 }
