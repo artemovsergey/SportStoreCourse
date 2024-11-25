@@ -1,4 +1,4 @@
-<div class="row">
+<div *ngIf="false" class="row">
     <div class="sign">
         <h1> Регистрация </h1>
         <form (ngSubmit)= "sign()" autocomplete="off">
@@ -20,5 +20,49 @@
         </form>
     </div>
 </div>
+
+
+
+
+<div *ngIf="true" class="row">
+    <div class="sign">
+
+        <div class="alert" *ngIf="signForm.hasError('checkConfirmLogin') && (signForm.touched || signForm.dirty)">
+            <label>
+                Пароли не совпадают
+            </label>
+        </div>
+
+        <h1> Регистрация </h1>
+        <form [formGroup]="signForm" (ngSubmit)= "sign()" autocomplete="off">
+            <p>
+                <mat-form-field>
+                    <mat-label>Login</mat-label>
+                    <input matInput formControlName="login" type="text"  autocomplete="off" />
+                </mat-form-field>
+            </p>
+            <p>
+                <mat-form-field>
+                    <mat-label>Password</mat-label>
+                    <input matInput formControlName="password" type="password"  autocomplete="off" />
+                </mat-form-field>
+            </p>
+            <button color="primary"  mat-flat-button type="submit">
+                Создать
+            </button>
+        </form>
+    </div>
+</div>
+
+<p>
+    {{signForm.value | json}}
+
+    {{signForm.status| json}}
+
+    {{signForm.hasError('checkPasswordConfirmValidator') | json }}
+</p>
+
+
+
 
 

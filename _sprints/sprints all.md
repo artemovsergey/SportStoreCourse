@@ -196,6 +196,12 @@ Application - в интерфейсах сделать обобщенный ти
 CI-CD: GitLab, Github
 Test: xUnit
 
+
+# Хранение фото
+
+https://cloudinary.com
+
+
 # Sprint 1 Introduction
 
 Реализовать базовую функциональность API и иметь начальное представление о:
